@@ -7,10 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="FUNKENFLUG Johanna Weber Edition – Premium Party Game with AI Testing">
-    <title>FUNKENFLUG • Johanna Weber Edition</title>
-
+    <title>FUNKENFLUG • Johanna Weber Edition v2.5</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap');
         
@@ -24,13 +21,12 @@
             --silk: #e8e0d5;
             --emerald: #27ae60;
             --neon: #00ff88;
-            --bot-blue: #4facfe;
         }
 
         * { 
             margin:0; padding:0; box-sizing:border-box; 
             -webkit-tap-highlight-color:transparent; 
-            touch-action:manipulation; 
+            touch-action: manipulation;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
@@ -48,20 +44,21 @@
             position:absolute; inset:0; display:none; 
             flex-direction:column; 
             background:linear-gradient(135deg, var(--void) 0%, var(--deep) 100%); 
-            padding-top:env(safe-area-inset-top); 
-            padding-bottom:env(safe-area-inset-bottom); 
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .screen.active { display:flex; }
+        .screen.active { display:flex !important; }
 
         h1 { 
             font-family:'Cinzel',serif; 
             font-size:clamp(1.8rem,6vw,2.4rem); 
             color:var(--gold); 
             text-align:center; 
-            letter-spacing:0.08em; 
-            text-shadow:0 0 25px rgba(212,175,55,0.4); 
+            letter-spacing:0.08em;
+            text-shadow:0 0 25px rgba(212,175,55,0.4);
+            margin: 1rem 0;
         }
 
         .watermark {
@@ -70,7 +67,7 @@
             color:#d4af37; opacity:0.045;
             transform:rotate(-17deg); pointer-events:none; 
             z-index:999; letter-spacing:-25px; 
-            white-space:nowrap; font-family:system-ui; line-height:1;
+            white-space:nowrap; font-family:system-ui;
         }
 
         /* AUTH */
@@ -84,12 +81,9 @@
             width:min(220px,65vw); height:58px; 
             background:var(--obsidian); border:3px solid var(--gold);
             color:var(--gold); font-family:'Cinzel',serif; 
-            font-size:1.8rem; text-align:center; letter-spacing:12px;
+            font-size:16px; text-align:center; letter-spacing:12px;
             border-radius:12px; outline:none;
             -webkit-appearance: none;
-            /* FIX: iOS Zoom Prevention */
-            font-size:16px;
-            touch-action: manipulation;
         }
 
         .btn {
@@ -102,14 +96,7 @@
             position: relative; overflow: hidden;
         }
         .btn:active { transform:scale(0.97); }
-        .btn::after {
-            content: ''; position: absolute; top: 50%; left: 50%;
-            width: 0; height: 0; background: rgba(255,255,255,0.1);
-            border-radius: 50%; transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-        }
-        .btn:active::after { width: 200%; height: 200%; }
-
+        
         .btn-secondary {
             background: transparent; border: 2px solid rgba(232,224,213,0.4);
         }
@@ -119,12 +106,11 @@
             background: rgba(0,255,136,0.1); border: 1px solid var(--neon);
             color: var(--neon); opacity: 0.6;
         }
-        .btn-beta:hover { opacity: 1; }
-        .btn-small { padding: 8px 16px; font-size: 0.75rem; width: auto; min-height: 36px; }
         .btn-add {
             background: rgba(212,175,55,0.1); border: 2px dashed var(--gold);
             color: var(--gold); width: 100%; margin-top: 0.5rem;
         }
+        .btn-small { padding: 8px 16px; font-size: 0.75rem; width: auto; }
 
         /* PLAYER SETUP */
         .player-setup-container {
@@ -135,26 +121,18 @@
         .player-input-row { display: flex; align-items: center; gap: 0.5rem; }
         .player-input {
             flex: 1; padding: 14px; background: #111; border: 2px solid #d4af37;
-            color: #e8e0d5; border-radius: 10px; font-size: 1rem; font-family: 'Inter', sans-serif;
-            /* FIX: iOS Zoom Prevention */
-            font-size: 16px;
-            touch-action: manipulation;
+            color: #e8e0d5; border-radius: 10px; font-size: 16px; font-family: 'Inter', sans-serif;
         }
         .player-input.host {
-            background: rgba(212,175,55,0.1); border-color: var(--gold); font-family: 'Cinzel', serif;
+            background: rgba(212,175,55,0.1); font-family: 'Cinzel', serif;
         }
         .player-remove {
             width: 36px; height: 36px; border-radius: 50%;
             background: rgba(220,20,60,0.2); border: 1px solid var(--crimson);
             color: var(--crimson); display: flex; align-items: center;
-            justify-content: center; cursor: pointer; font-size: 1.2rem; transition: all 0.2s;
+            justify-content: center; cursor: pointer; font-size: 1.2rem;
         }
-        .player-remove:hover { background: var(--crimson); color: white; }
-        .player-remove:disabled { opacity: 0.3; cursor: not-allowed; }
-        .player-counter {
-            text-align: center; color: rgba(232,224,213,0.5);
-            font-size: 0.8rem; margin: 0.5rem 0; letter-spacing: 1px;
-        }
+        .player-remove:disabled { opacity: 0; pointer-events: none; }
 
         /* DISCIPLINE GRID */
         .discipline-grid { 
@@ -169,66 +147,38 @@
             border-radius:14px; padding:1.25rem; text-align:center; 
             cursor:pointer; transition:all 0.3s; position: relative;
         }
-        .discipline-card.locked { opacity:0.35; pointer-events:none; border-color: rgba(212,175,55,0.1); }
+        .discipline-card.locked { opacity:0.35; pointer-events:none; }
         .discipline-card.active { border-color:var(--gold); box-shadow:0 0 25px rgba(212,175,55,0.3); }
-        .discipline-card:not(.locked):hover {
-            border-color: rgba(212,175,55,0.6); transform: translateY(-2px);
-        }
 
         /* SWIPE GAME */
         .swipe-screen { 
             position:fixed; inset:0; background:var(--void); 
             z-index:300; display:none; flex-direction:column; 
         }
-        .swipe-screen.active { display:flex; }
+        .swipe-screen.active { display:flex !important; }
         .swipe-area { 
             flex:1; position:relative; display:flex; 
             align-items:center; justify-content:center;
             touch-action: none; cursor: grab;
         }
-        .swipe-area:active { cursor: grabbing; }
         .swipe-arrow {
             font-size:6.5rem; color:var(--gold); 
             text-shadow:0 0 40px rgba(212,175,55,0.6); 
             transition:all 0.3s; opacity:0; transform: scale(0.8);
-            will-change: transform, opacity;
         }
         .swipe-arrow.show { opacity:1; transform:scale(1); }
-        .swipe-instruction {
-            position: absolute; bottom: 20%; left: 50%;
-            transform: translateX(-50%); color: rgba(232,224,213,0.5);
-            font-size: 0.85rem; text-align: center;
-        }
 
-        /* GAME */
+        /* GAME HEADER */
         .game-header {
             background:rgba(26,10,10,0.98); padding:12px 16px; 
             display:flex; justify-content:space-between; align-items:center;
             border-bottom:1px solid rgba(220,20,60,0.25); z-index:100;
-            position: sticky; top: 0;
         }
-        .player-indicator { display: flex; flex-direction: column; }
-        .player-label { font-size: 0.65rem; color: rgba(232,224,213,0.5); letter-spacing: 2px; text-transform: uppercase; }
-        .player-name { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; letter-spacing: 1px; }
-        .player-avatars { display: flex; margin-right: 10px; }
-        .avatar {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--burgund), var(--crimson));
-            border: 2px solid var(--gold); display: flex; align-items: center;
-            justify-content: center; font-size: 0.75rem; font-weight: 700;
-            margin-left: -8px; position: relative; transition: all 0.3s;
-        }
-        .avatar:first-child { margin-left: 0; }
-        .avatar.active { 
-            background: linear-gradient(135deg, var(--gold), #b8941f);
-            color: var(--void); transform: scale(1.1); z-index: 10;
-            box-shadow: 0 0 15px rgba(212,175,55,0.5);
-        }
+        .player-name { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; }
         .safe-word-btn {
             background:var(--crimson); padding:9px 18px; border:none; 
             color:white; font-weight:700; border-radius:6px;
             animation:pulse 1.8s infinite; font-size:0.8rem; cursor: pointer;
-            box-shadow: 0 0 15px rgba(220,20,60,0.4);
         }
         @keyframes pulse { 
             0%,100% { box-shadow:0 0 0 0 rgba(220,20,60,0.7); } 
@@ -238,10 +188,11 @@
         .task-card {
             background:linear-gradient(135deg,rgba(26,10,10,0.98),rgba(10,5,5,0.98)); 
             border:2px solid var(--gold); border-radius:14px; 
-            padding:1.75rem 1.25rem; width:100%; max-width:420px; 
-            box-shadow:0 15px 40px rgba(0,0,0,0.6); margin: 0 auto;
+            padding:1.75rem 1.25rem; width:90%; max-width:420px; 
+            margin: 1rem auto;
         }
 
+        /* WHEEL */
         .wheel-container { 
             width:min(240px,62vw); height:min(240px,62vw); 
             position:relative; margin:1rem auto; 
@@ -249,14 +200,14 @@
         .wheel {
             width:100%; height:100%; border-radius:50%; 
             border:8px solid var(--gold); position: relative; overflow:hidden;
-            box-shadow:0 0 30px rgba(212,175,55,0.5), inset 0 0 50px rgba(0,0,0,0.5);
+            box-shadow:0 0 30px rgba(212,175,55,0.5);
         }
         .wheel-segment {
             position:absolute; width:50%; height:50%; 
-            transform-origin:100% 100%; display:flex; 
-            align-items:center; justify-content:center;
-            font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; 
+            transform-origin:100% 100%; 
             left: 50%; top: 50%; margin-left: -50%; margin-top: -50%;
+            display:flex; align-items:center; justify-content:center;
+            font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; 
         }
         .segment-1 { background:var(--gold); transform:rotate(0deg); color: #000; }
         .segment-2 { background:var(--burgund); transform:rotate(90deg); color:#fff; }
@@ -267,7 +218,6 @@
             transform:translateX(-50%);
             border-left:16px solid transparent; border-right:16px solid transparent;
             border-top:32px solid var(--gold); z-index:20;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
 
         #intensityBar { display: none; gap: 16px; justify-content: center; margin: 1rem 0; }
@@ -276,133 +226,70 @@
             border: 2px solid rgba(212,175,55,0.3); display: flex;
             align-items: center; justify-content: center;
             font-family: 'Cinzel', serif; font-weight: 700; cursor: pointer;
-            transition: all 0.3s; background: rgba(212,175,55,0.05);
-            color: rgba(232,224,213,0.5);
+            background: rgba(212,175,55,0.05);
         }
         .intensity-dot.active {
             border-color: var(--gold); background: var(--gold);
-            color: var(--void); box-shadow: 0 0 20px rgba(212,175,55,0.4);
+            color: var(--void);
         }
-
-        .progress-step {
-            flex: 1; height: 6px; background: rgba(212,175,55,0.15);
-            border-radius: 3px; transition: all 0.5s; position: relative; overflow: hidden;
-        }
-        .progress-step.completed {
-            background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.4);
-        }
-        .progress-step.active::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .progress-container {
             position:fixed; bottom:max(18px, env(safe-area-inset-bottom)); 
             left:50%; transform:translateX(-50%);
             width:min(92%,400px); background:rgba(0,0,0,0.85); 
             padding:12px; border-radius:18px;
-            border:1px solid rgba(212,175,55,0.25); backdrop-filter:blur(12px); z-index:200;
+            border:1px solid rgba(212,175,55,0.25); z-index:200;
         }
+        .progress-step {
+            flex: 1; height: 6px; background: rgba(212,175,55,0.15);
+            border-radius: 3px;
+        }
+        .progress-step.completed { background: var(--gold); }
 
         #modeSelector {
             display:grid; grid-template-columns:1fr 1fr; gap:12px;
-            width:100%; max-width:400px;
+            width:90%; max-width:400px; margin: 0 auto;
         }
         #modeSelector > div {
-            border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s;
-            font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 1px;
+            border: 1px solid rgba(212,175,55,0.2);
+            font-family: 'Cinzel', serif; font-size: 0.85rem;
             padding: 1.2rem; border-radius: 12px; text-align: center; cursor: pointer;
-            background: rgba(212,175,55,0.05);
         }
-        #modeSelector > div:hover, #modeSelector > div.active {
-            border-color: var(--gold); background: rgba(212,175,55,0.2);
-            box-shadow: 0 0 15px rgba(212,175,55,0.2);
-        }
-        #modeSelector > div.locked {
-            opacity: 0.3; pointer-events: none; cursor: default;
-        }
+        #modeSelector > div.active { border-color: var(--gold); background: rgba(212,175,55,0.2); }
+        #modeSelector > div.locked { opacity: 0.3; pointer-events: none; }
 
+        /* MODAL */
         #successModal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.96);
             display: none; align-items: center; justify-content: center;
-            z-index: 999; backdrop-filter: blur(8px);
+            z-index: 999;
         }
-        #successModal > div {
+        #successModal.active { display: flex !important; }
+        .modal-content {
             background: linear-gradient(145deg, #111, #0a0a0a);
             border: 2px solid var(--gold); max-width: 340px; width: 90%;
-            padding: 2rem 1.5rem; border-radius: 14px; text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.1);
+            padding: 2rem; border-radius: 14px; text-align: center;
         }
 
         .complete-btn {
             margin-top: 1.5rem; background: transparent;
             border: 2px solid var(--emerald); color: var(--emerald);
             padding: 12px 24px; border-radius: 8px; cursor: pointer;
-            font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 1px;
-            transition: all 0.3s; width: 100%;
-        }
-        .complete-btn:hover {
-            background: var(--emerald); color: var(--void);
-            box-shadow: 0 0 20px rgba(39,174,96,0.3);
+            font-family: 'Cinzel', serif; width: 100%;
         }
 
-        .next-player-hint {
-            text-align: center; padding: 1rem;
-            color: rgba(232,224,213,0.6); font-size: 0.9rem; font-style: italic;
-        }
-        .player-turn-badge {
-            display: inline-block; font-size: 0.65rem; color: rgba(212,175,55,0.7);
-            margin-left: 0.5rem; letter-spacing: 1px;
-        }
-
-        /* TESTING UI */
+        /* BETA SCREEN */
+        .beta-screen { background: rgba(0,20,10,0.95) !important; }
         .testing-header {
             background: rgba(0,255,136,0.05); border-bottom: 1px solid rgba(0,255,136,0.2);
-            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; display: flex; justify-content: space-between;
         }
-        .testing-title {
-            font-family: 'Fira Code', monospace; font-size: 0.9rem;
-            color: var(--neon); font-weight: 700;
-        }
-        .testing-panel {
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,136,0.15);
-            border-radius: 8px; padding: 12px; margin-bottom: 12px;
-        }
-        .bot-stat {
-            display: flex; align-items: center; gap: 8px;
-            font-family: 'Fira Code', monospace; font-size: 0.75rem;
-            color: var(--neon);
-        }
-        .bot-indicator {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--neon); animation: blink 1s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .testing-title { font-family: 'Fira Code', monospace; color: var(--neon); }
         .bot-log {
             font-family: 'Fira Code', monospace; font-size: 0.7rem;
-            color: rgba(0,255,136,0.8); margin-bottom: 4px; line-height: 1.4;
-        }
-        .stress-bar {
-            width: 100%; height: 6px; background: rgba(0,0,0,0.5);
-            border-radius: 3px; overflow: hidden; margin-top: 8px;
-        }
-        .stress-fill {
-            height: 100%; background: linear-gradient(90deg, var(--neon), #00cc66);
-            transition: width 0.3s;
-        }
-        .test-control-btn {
-            background: rgba(0,255,136,0.1); border: 1px solid var(--neon);
-            color: var(--neon); padding: 8px 12px; border-radius: 6px;
-            font-family: 'Fira Code', monospace; font-size: 0.7rem;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .test-control-btn:hover {
-            background: rgba(0,255,136,0.2); box-shadow: 0 0 10px rgba(0,255,136,0.3);
+            color: rgba(0,255,136,0.8); padding: 4px 0;
         }
 
-        /* FIX: Shake Animation für falsche Codes */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
@@ -414,85 +301,104 @@
     <div class="watermark">FUNKENFLUG</div>
 
     <!-- AUTH SCREEN -->
-    <div class="screen active" id="authScreen">
+    <div id="authScreen" class="screen active">
         <div class="auth-container">
             <h1>FUNKENFLUG</h1>
-            <div style="text-align:center;color:rgba(232,224,213,0.6);font-size:0.9rem;letter-spacing:1px;">Johanna Weber Edition</div>
+            <div style="text-align:center;opacity:0.7;margin-bottom:20px;">Johanna Weber Edition</div>
             <input type="text" id="accessCode" class="code-input" placeholder="CODE" maxlength="8" autocomplete="off">
-            <button onclick="authenticate()" class="btn">ZUGANG</button>
-            <button onclick="startDemo()" class="btn btn-secondary">DEMO</button>
+            <button class="btn" onclick="window.authenticate()">ZUGANG</button>
+            <button class="btn btn-secondary" onclick="window.startDemo()">DEMO</button>
         </div>
-        <button class="btn btn-beta" onclick="enterBetaMode()">TSTBT BETA</button>
+        <button class="btn btn-beta" onclick="window.enterBeta()">TSTBT BETA</button>
     </div>
 
     <!-- SETUP SCREEN -->
-    <div class="screen" id="setupScreen">
-        <div style="padding:1.5rem;text-align:center;">
-            <h1>Spielerinnen</h1>
-        </div>
+    <div id="setupScreen" class="screen">
+        <div style="padding:1.5rem;text-align:center;"><h1>Spielerinnen</h1></div>
         <div class="player-setup-container">
             <div class="player-list" id="playerList"></div>
-            <div class="player-counter" id="playerCounter"></div>
-            <button id="addPlayerBtn" onclick="addPlayer()" class="btn btn-add">+ SPIELERIN HINZUFÜGEN</button>
-            <button onclick="startGameSetup()" class="btn" style="margin-top:2rem;">SPIEL STARTEN</button>
+            <div style="text-align:center;color:rgba(232,224,213,0.5);font-size:0.8rem;margin:0.5rem 0;" id="playerCounter"></div>
+            <button onclick="window.addPlayer()" class="btn btn-add">+ SPIELERIN HINZUFÜGEN</button>
+            <button onclick="window.startGameSetup()" class="btn" style="margin-top:2rem;">SPIEL STARTEN</button>
         </div>
     </div>
 
     <!-- DISCIPLINE SCREEN -->
-    <div class="screen" id="disciplineScreen">
-        <div style="padding:1.5rem;text-align:center;">
-            <h1>Disziplinen</h1>
-        </div>
+    <div id="disciplineScreen" class="screen">
+        <div style="padding:1.5rem;text-align:center;"><h1>Disziplinen</h1></div>
         <div class="discipline-grid" id="disciplineGrid"></div>
     </div>
 
     <!-- SWIPE GAME SCREEN -->
-    <div class="swipe-screen" id="swipeScreen">
+    <div id="swipeScreen" class="swipe-screen">
         <div class="game-header">
-            <div class="player-indicator">
-                <div class="player-label">Aktuelle Spielerin</div>
-                <div id="swipePlayerName" class="player-name">—</div>
-            </div>
-            <button onclick="triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+            <div><div style="font-size:0.65rem;color:rgba(232,224,213,0.5);">Aktuelle Spielerin</div>
+            <div id="swipePlayerName" class="player-name">—</div></div>
+            <button onclick="window.triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
         </div>
         <div class="swipe-area" id="swipeArea">
             <div style="text-align:center;">
-                <div id="swipeArrow" class="swipe-arrow">↑</div>
-                <div id="swipeTarget" style="color:rgba(232,224,213,0.6);font-size:0.9rem;margin-top:2rem;">Wische nach oben</div>
-                <div id="swipeProgress" style="color:var(--gold);font-size:1.2rem;margin-top:1rem;font-family:Cinzel,serif;">0 / 5</div>
+                <div id="swipeArrow" class="swipe-arrow show">↑</div>
+                <div style="color:var(--gold);margin-top:1rem;font-family:Cinzel;" id="swipeProgress">0 / 5</div>
             </div>
-            <div class="swipe-instruction">Wische schnell in die angezeigte Richtung</div>
         </div>
     </div>
 
-    <!-- GAME SCREEN -->
-    <div class="screen" id="gameScreen">
+    <!-- QUIZ SCREEN (Modal-like) -->
+    <div id="quizScreen" class="screen" style="z-index:400;">
         <div class="game-header">
-            <div class="player-indicator">
-                <div class="player-label">Aktuelle Spielerin</div>
+            <div class="player-name">WISSENSTEST</div>
+            <button onclick="window.triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px;">
+            <div class="task-card" id="quizCard" style="width:100%;">
+                <div id="quizQuestion" style="font-size:1.2rem;margin-bottom:1.5rem;"></div>
+                <div id="quizAnswers"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CASINO SCREEN -->
+    <div id="casinoScreen" class="screen" style="z-index:400;">
+        <div class="game-header">
+            <div class="player-name">RISIKO</div>
+            <button onclick="window.triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+            <div class="task-card" style="text-align:center;">
+                <div style="font-size:3rem;margin-bottom:1rem;">🎲</div>
+                <div id="casinoResult" style="font-size:1.5rem;margin-bottom:1rem;">Bereit...</div>
+                <button onclick="window.spinCasino()" class="btn" id="casinoBtn" style="width:200px;">ZIEHEN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="gameScreen" class="screen">
+        <div class="game-header">
+            <div>
+                <div style="font-size:0.65rem;color:rgba(232,224,213,0.5);">Aktuelle Spielerin</div>
                 <div id="currentPlayerName" class="player-name">—</div>
             </div>
-            <div class="player-avatars" id="playerAvatars"></div>
-            <button onclick="triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div id="playerAvatars" style="display:flex;margin-right:10px;"></div>
+                <button onclick="window.triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+            </div>
         </div>
 
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;gap:1.5rem;overflow-y:auto;">
-            <div id="modeSelector" style="margin-bottom:1rem;"></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:1rem;gap:1rem;overflow-y:auto;">
+            <div id="modeSelector"></div>
 
             <div id="intensityBar">
-                <div class="intensity-dot active" onclick="setIntensity(1)">I</div>
-                <div class="intensity-dot" onclick="setIntensity(2)">II</div>
-                <div class="intensity-dot" onclick="setIntensity(3)">III</div>
+                <div class="intensity-dot active" onclick="window.setIntensity(1)">I</div>
+                <div class="intensity-dot" onclick="window.setIntensity(2)">II</div>
+                <div class="intensity-dot" onclick="window.setIntensity(3)">III</div>
             </div>
 
             <div id="taskCard" class="task-card" style="display:none;">
                 <div id="taskCategory" style="color:#d4af37;font-size:0.75rem;letter-spacing:2px;margin-bottom:0.75rem;text-transform:uppercase;"></div>
-                <div id="taskText" style="font-size:1.15rem;line-height:1.6;min-height:120px;font-weight:300;"></div>
-                <button onclick="completeTask()" class="complete-btn">AUFGABE ABGESCHLOSSEN</button>
-            </div>
-
-            <div id="nextPlayerHint" class="next-player-hint" style="display:none;">
-                Nächste Spielerin: <b id="nextPlayerName" style="color:var(--gold);"></b>
+                <div id="taskText" style="font-size:1.1rem;line-height:1.6;margin-bottom:1.5rem;"></div>
+                <button onclick="window.completeTask()" class="complete-btn">AUFGABE ABGESCHLOSSEN</button>
             </div>
 
             <div id="wheelContainer" style="display:none;width:100%;text-align:center;">
@@ -505,219 +411,76 @@
                         <div class="wheel-segment segment-4">CRIMSON</div>
                     </div>
                 </div>
-                <button id="spinBtn" onclick="spinRewardWheel()" class="btn" style="margin-top:1.5rem;width:220px;background:linear-gradient(135deg,var(--gold),#b8941f);color:#000;border-color:#000;font-weight:700;">BELOHNUNG DREHEN</button>
+                <button id="spinBtn" onclick="window.spinWheel()" class="btn" style="margin-top:1.5rem;background:linear-gradient(135deg,var(--gold),#b8941f);color:#000;">DREHEN</button>
+            </div>
+
+            <div id="nextPlayerHint" style="display:none;color:rgba(232,224,213,0.6);font-style:italic;">
+                Nächste: <b id="nextPlayerName" style="color:var(--gold);"></b>
             </div>
         </div>
 
         <div class="progress-container">
-            <div style="display:flex;gap:8px;margin-bottom:8px;" id="progressBar">
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
                 <div id="prog1" class="progress-step"></div>
                 <div id="prog2" class="progress-step"></div>
                 <div id="prog3" class="progress-step"></div>
                 <div id="prog4" class="progress-step"></div>
             </div>
-            <div id="statusLine" style="text-align:center;font-size:0.75rem;color:#d4af37;letter-spacing:1.5px;font-family:'Cinzel',serif;">Wähle eine Disziplin</div>
+            <div id="statusLine" style="text-align:center;font-size:0.75rem;color:#d4af37;font-family:Cinzel;">Wähle eine Disziplin</div>
         </div>
     </div>
 
-    <!-- TSTBT BETA SCREEN -->
-    <div class="screen beta-screen" id="betaScreen">
+    <!-- BETA SCREEN -->
+    <div id="betaScreen" class="screen beta-screen">
         <div class="testing-header">
-            <div class="testing-title">⚡ TSTBT • AI BOT ARMY v1.0</div>
-            <div style="font-family:'Fira Code',monospace;font-size:0.7rem;color:var(--neon);">30 UNITS ACTIVE</div>
+            <div class="testing-title">⚡ TSTBT • BOT ARMY</div>
+            <div style="font-family:Fira Code;font-size:0.7rem;color:var(--neon);">30 UNITS</div>
         </div>
-        
         <div style="flex:1;overflow-y:auto;padding:12px;">
-            <div class="testing-panel">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                    <div style="color:var(--neon);font-size:0.8rem;">🤖 BOT ARMY STATUS</div>
-                    <div id="botArmyStatus" class="bot-stat"><div class="bot-indicator"></div>STANDBY</div>
-                </div>
-                <div id="botStatsDisplay" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+            <div id="botLogs" style="background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;min-height:200px;">
+                <div class="bot-log">System initialized...</div>
             </div>
-
-            <div class="testing-panel">
-                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">📊 STOCHASTIC ENGINE</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.7rem;">
-                    <div>Entropy: <span id="entropyVal" style="color:var(--gold);">0.00</span></div>
-                    <div>Chaos: <span id="chaosVal" style="color:var(--gold);">0.00</span></div>
-                    <div>Sync: <span id="syncVal" style="color:var(--gold);">100%</span></div>
-                    <div>Load: <span id="loadVal" style="color:var(--gold);">0%</span></div>
-                </div>
-                <div class="stress-bar"><div id="stressFill" class="stress-fill" style="width:0%"></div></div>
-            </div>
-
-            <div class="testing-panel">
-                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">🎯 TEST PROTOCOLS</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                    <button class="test-control-btn" onclick="runBotSimulation('swipe')">Test: Swipe</button>
-                    <button class="test-control-btn" onclick="runBotSimulation('discipline')">Test: Discipline</button>
-                    <button class="test-control-btn" onclick="runBotSimulation('wheel')">Test: Wheel</button>
-                    <button class="test-control-btn" onclick="runBotSimulation('full')">Test: Full Game</button>
-                </div>
-            </div>
-
-            <div class="testing-panel">
-                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">📝 LIVE LOG</div>
-                <div id="botLogContainer" style="max-height:200px;overflow-y:auto;">
-                    <div class="bot-log" style="opacity:0.5;">System initialized. Waiting for commands...</div>
-                </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+                <button class="btn btn-small" onclick="window.runTest('swipe')">Test: Swipe</button>
+                <button class="btn btn-small" onclick="window.runTest('full')">Test: Full</button>
             </div>
         </div>
-
-        <div style="padding:12px;border-top:1px solid rgba(0,255,136,0.2);display:flex;gap:8px;">
-            <button class="btn" onclick="showScreen('authScreen')" style="flex:1;font-size:0.75rem;">ZURÜCK ZUM AUTH</button>
-            <button class="btn btn-secondary" onclick="clearBotLogs()" style="width:auto;font-size:0.75rem;">CLEAR LOG</button>
-        </div>
+        <button class="btn" onclick="window.showScreen('authScreen')" style="margin:12px;">ZURÜCK</button>
     </div>
 
-    <!-- MODAL - FIX: data-closeable Attribut hinzugefügt -->
-    <div id="successModal" data-closeable="true" onclick="if(event.target===this && this.dataset.closeable === 'true')closeModal()">
-        <div>
-            <div id="modalTitle" style="color:#d4af37;font-family:Cinzel,serif;font-size:1.6rem;margin-bottom:1rem;text-shadow:0 0 20px rgba(212,175,55,0.3);"></div>
-            <div id="modalText" style="margin-bottom:2rem;line-height:1.6;color:rgba(232,224,213,0.9);"></div>
-            <button id="modalBtn" onclick="closeModal()" class="btn" style="width:100%;">WEITER</button>
+    <!-- MODAL -->
+    <div id="successModal" data-closeable="true" onclick="if(event.target===this && this.dataset.closeable==='true')window.closeModal()">
+        <div class="modal-content">
+            <div id="modalTitle" style="color:#d4af37;font-family:Cinzel;font-size:1.6rem;margin-bottom:1rem;"></div>
+            <div id="modalText" style="margin-bottom:2rem;line-height:1.6;"></div>
+            <button id="modalBtn" onclick="window.closeModal()" class="btn" style="width:100%;">WEITER</button>
         </div>
     </div>
 
 <script>
-// ====================== ERROR BOUNDARY ======================
-window.onerror = function(msg, url, line) {
-    console.error(`[FUNKENFLUG ERROR] ${msg} at line ${line}`);
-    // Versuche Modal anzuzeigen wenn verfügbar, sonst alert
-    try {
-        const modal = document.getElementById('successModal');
-        const title = document.getElementById('modalTitle');
-        const text = document.getElementById('modalText');
-        const btn = document.getElementById('modalBtn');
-        if (modal && title && text) {
-            title.textContent = "SYSTEMFEHLER";
-            text.innerHTML = `Ein kritischer Fehler ist aufgetreten.<br><br><code style="font-size:0.7rem;color:#ff6b6b;">${msg}</code><br><br>Bitte Seite neu laden.`;
-            modal.dataset.closeable = "true";
-            modal.style.display = 'flex';
-            if (btn) btn.style.display = 'block';
-        }
-    } catch(e) {
-        alert("Kritischer Systemfehler. Bitte neu laden.");
-    }
-    return true;
-};
-
-// ====================== UTILITY FUNCTIONS ======================
-function escapeHtml(str) { 
-    if (!str) return '';
-    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); 
-}
-
-// ====================== KONFIGURATION ======================
-const CONFIG = {
-    version: '2.4.1-FIXED',
-    buildDate: '2026-03-12',
+// ====================== CONFIG ======================
+window.CONFIG = {
     fullAccessCode: '26101908',
     betaCode: 'TSTBT',
     minPlayers: 2,
-    maxPlayers: 8,
-    demoDisciplines: [1, 2]
+    maxPlayers: 8
 };
 
-// ====================== TSTBT - BOT SYSTEM ======================
-const CULTURES = ['eastern', 'western', 'hybrid'];
-const PERSONALITY_ARCHETYPES = ['aggressive', 'methodical', 'chaotic', 'passive', 'sniper'];
+// ====================== STATE ======================
+window.gameState = {
+    fullAccess: false, betaMode: false, players: [], currentPlayerIndex: 0,
+    completedDisciplines: [], unlockedModes: [], currentMode: null,
+    currentIntensity: 1, wheelAngle: 0, turnCount: 1, pendingAfterModal: null
+};
 
-class StochasticEngine {
-    constructor() { this.entropy = 0.5; this.chaos = 0.2; }
-    mutate(input) {
-        this.entropy = Math.min(1, this.entropy + Math.random() * 0.1);
-        return input.map(v => v * (0.9 + Math.random() * 0.2));
-    }
-    generateSeed() { return Date.now() * Math.random(); }
-}
+window.swipeState = { count: 0, target: null, startX: 0, startY: 0, active: false };
 
-class Bot {
-    constructor(id) {
-        this.id = id;
-        this.culture = CULTURES[Math.floor(Math.random() * CULTURES.length)];
-        this.personality = PERSONALITY_ARCHETYPES[Math.floor(Math.random() * PERSONALITY_ARCHETYPES.length)];
-        this.reactionTime = 200 + Math.random() * 800;
-        this.accuracy = 0.7 + Math.random() * 0.25;
-        this.active = false;
-    }
-    simulateSwipe() {
-        const directions = ['up', 'right', 'down', 'left'];
-        const target = directions[Math.floor(Math.random() * 4)];
-        const success = Math.random() < this.accuracy;
-        return { type: 'swipe', target, success, delay: Math.floor(this.reactionTime * (0.8 + Math.random() * 0.4)), botId: this.id, personality: this.personality };
-    }
-    simulateDisciplineChoice() {
-        const available = Math.max(1, gameState.completedDisciplines.length + 1);
-        const choice = Math.floor(Math.random() * available) + 1;
-        return { type: 'discipline', choice, botId: this.id, culture: this.culture };
-    }
-    simulateWheelSpin() {
-        const segments = ['GOLD', 'BURGUND', 'SCHWARZ', 'CRIMSON'];
-        const result = segments[Math.floor(Math.random() * 4)];
-        return { type: 'wheel', result, anticipation: Math.floor(1000 + Math.random() * 2000), botId: this.id };
-    }
-}
-
-class BotArmy {
-    constructor(size = 30) {
-        this.bots = Array.from({length: size}, (_, i) => new Bot(i + 1));
-        this.engine = new StochasticEngine();
-        this.testResults = [];
-    }
-    async runTest(protocol, duration = 5000) {
-        this.active = true; this.testResults = [];
-        const startTime = Date.now();
-        const activeBots = this.bots.filter(() => Math.random() > 0.3);
-        activeBots.forEach(b => b.active = true);
-        logToBotUI(`⚡ Initiating ${protocol} test with ${activeBots.length} bots...`);
-        
-        const interval = setInterval(() => {
-            if (Date.now() - startTime > duration) {
-                clearInterval(interval); this.active = false; this.generateReport(); return;
-            }
-            activeBots.forEach(bot => {
-                if (Math.random() < 0.3) {
-                    let result;
-                    switch(protocol) {
-                        case 'swipe': result = bot.simulateSwipe(); break;
-                        case 'discipline': result = bot.simulateDisciplineChoice(); break;
-                        case 'wheel': result = bot.simulateWheelSpin(); break;
-                        case 'full':
-                            const r = Math.random();
-                            if (r < 0.4) result = bot.simulateSwipe();
-                            else if (r < 0.7) result = bot.simulateDisciplineChoice();
-                            else result = bot.simulateWheelSpin();
-                            break;
-                    }
-                    if (result) {
-                        this.testResults.push(result);
-                        logToBotUI(`[Bot ${result.botId}] ${result.type.toUpperCase()}`);
-                    }
-                }
-            });
-            updateStochasticMetrics(this.engine);
-        }, 200);
-    }
-    generateReport() {
-        const successRate = this.testResults.filter(r => r.type === 'swipe' ? r.success : true).length / Math.max(1, this.testResults.length);
-        const avgReaction = this.testResults.reduce((a, r) => a + (r.delay || 0), 0) / Math.max(1, this.testResults.length);
-        logToBotUI(`✓ Test complete. ${this.testResults.length} actions.`);
-        logToBotUI(`  Success rate: ${(successRate * 100).toFixed(1)}%`);
-        logToBotUI(`  Avg reaction: ${avgReaction.toFixed(0)}ms`);
-        logToBotUI(`  Entropy: ${this.engine.entropy.toFixed(3)}`);
-    }
-}
-
-const botArmy = new BotArmy(30);
-
-// ====================== DATENBANK ======================
-const taskDB = {
+// ====================== DATA ======================
+window.taskDB = {
     geschenkband: {
-        1: ["Die Gastgeberin beschreibt laut, wie sie dich dekorieren würde – ohne Berührung.","Verbundene Augen + nur verbale Dekoration durch die Gruppe.","Du stehst 30 Sekunden still und wirst nur mit Worten geschmückt.","Jede Spielerin nennt ein Accessoire, das sie dir anlegen würde."],
-        2: ["Leichte Seidenbänder um die Handgelenke – keine festen Knoten.","Langsames Auspacken mit verbundenen Augen unter Anleitung.","Eine Spielerin berührt nur deine Schultern für 20 Sekunden.","Du darfst nur mit Ja/Nein antworten während der Dekoration."],
-        3: ["Handgelenke mit weichem Stoff gefesselt – teste die Grenzen.","Kontrolliertes Auspacken mit gezielten, langsamen Berührungen.","Zwei Spielerinnen dekorieren gleichzeitig – synchronisierte Bewegungen.","60 Sekunden als lebendes Geschenk präsentieren – absolute Stille."]
+        1: ["Die Gastgeberin beschreibt laut, wie sie dich dekorieren würde – ohne Berührung.","Verbundene Augen + nur verbale Dekoration durch die Gruppe.","Du stehst 30 Sekunden still und wirst nur mit Worten geschmückt."],
+        2: ["Leichte Seidenbänder um die Handgelenke – keine festen Knoten.","Langsames Auspacken mit verbundenen Augen unter Anleitung.","Eine Spielerin berührt nur deine Schultern für 20 Sekunden."],
+        3: ["Handgelenke mit weichem Stoff gefesselt – teste die Grenzen.","Kontrolliertes Auspacken mit gezielten, langsamen Berührungen.","Zwei Spielerinnen dekorieren gleichzeitig – synchronisierte Bewegungen."]
     },
     inspektion: {
         1: ["30 Sekunden nur visuelle Betrachtung – keine Berührung erlaubt.","Die Gruppe beschreibt laut, was sie an dir beobachtet.","Stimmverzerrung aktiv – du erkennst nicht, wer spricht."],
@@ -736,109 +499,139 @@ const taskDB = {
     }
 };
 
-// ====================== SPIELSTATUS ======================
-let gameState = {
-    fullAccess: false, betaMode: false, players: [], currentPlayerIndex: 0,
-    completedDisciplines: [], unlockedModes: [], currentMode: null,
-    currentIntensity: 1, cumulativeWheelAngle: 0, currentTask: null, turnCount: 1, pendingAfterModal: null
-};
-
-let swipeState = { count: 0, currentTarget: null, startX: 0, startY: 0, isMouseDown: false, active: false };
-
-const arrows = ['↑', '→', '↓', '←'];
-const directions = ['up', 'right', 'down', 'left'];
-const dirLabels = ['nach oben', 'nach rechts', 'nach unten', 'nach links'];
-
-const wheelResults = [
-    {label:"GOLD", color:"#d4af37", text:"Gastgeberin bestimmt die nächste Aufgabe exklusiv."},
-    {label:"BURGUND", color:"#800020", text:"Freifahrt – Du wählst selbst Intensität und Art."},
-    {label:"SCHWARZ", color:"#111", text:"Rollentausch – Du wirst Beobachterin für eine Runde."},
-    {label:"CRIMSON", color:"#dc143c", text:"Intensität +1 (max. 3) • Sofortige Anwendung"}
+window.wheelResults = [
+    {label:"GOLD", text:"Gastgeberin bestimmt die nächste Aufgabe exklusiv."},
+    {label:"BURGUND", text:"Freifahrt – Du wählst selbst Intensität und Art."},
+    {label:"SCHWARZ", text:"Rollentausch – Du wirst Beobachterin für eine Runde."},
+    {label:"CRIMSON", text:"Intensität +1 (max. 3) • Sofortige Anwendung"}
 ];
 
-// ====================== SPIELERVERWALTUNG ======================
-function initPlayerSetup() {
-    gameState.players = ["Johanna", ""];
-    renderPlayerInputs();
-}
+// ====================== UTILS ======================
+window.escapeHtml = function(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+};
 
-function renderPlayerInputs() {
+window.showScreen = function(id) {
+    document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
+    const target = document.getElementById(id);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'flex';
+    }
+};
+
+window.showModal = function(title, text, closeable = true) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalText').innerHTML = text;
+    document.getElementById('modalBtn').style.display = closeable ? 'block' : 'none';
+    document.getElementById('successModal').dataset.closeable = closeable ? 'true' : 'false';
+    document.getElementById('successModal').classList.add('active');
+    document.getElementById('successModal').style.display = 'flex';
+};
+
+window.closeModal = function() {
+    document.getElementById('successModal').classList.remove('active');
+    document.getElementById('successModal').style.display = 'none';
+    if (typeof window.gameState.pendingAfterModal === 'function') {
+        const fn = window.gameState.pendingAfterModal;
+        window.gameState.pendingAfterModal = null;
+        setTimeout(fn, 50);
+    }
+};
+
+// ====================== AUTH ======================
+window.authenticate = function() {
+    const input = document.getElementById('accessCode').value;
+    if (input === window.CONFIG.fullAccessCode) {
+        window.gameState.fullAccess = true;
+        try { localStorage.setItem('ff_access', 'full'); } catch(e) {}
+        window.initSetup();
+    } else if (input === window.CONFIG.betaCode) {
+        window.enterBeta();
+    } else {
+        const btn = document.querySelector('#authScreen .btn');
+        btn.style.animation = 'shake 0.5s';
+        setTimeout(() => btn.style.animation = '', 500);
+        window.showModal("Falscher Code", "Demo oder Beta verfügbar.");
+    }
+};
+
+window.startDemo = function() {
+    window.gameState.fullAccess = false;
+    try { localStorage.setItem('ff_access', 'demo'); } catch(e) {}
+    window.initSetup();
+};
+
+window.enterBeta = function() {
+    window.gameState.betaMode = true;
+    try { localStorage.setItem('ff_access', 'beta'); } catch(e) {}
+    window.showScreen('betaScreen');
+};
+
+// ====================== SETUP ======================
+window.initSetup = function() {
+    window.showScreen('setupScreen');
+    window.gameState.players = ["Johanna", ""];
+    window.renderPlayers();
+};
+
+window.renderPlayers = function() {
     const list = document.getElementById('playerList');
     const counter = document.getElementById('playerCounter');
-    const addBtn = document.getElementById('addPlayerBtn');
-
-    list.innerHTML = gameState.players.map((name, index) => {
-        const isHost = index === 0;
-        const canRemove = gameState.players.length > CONFIG.minPlayers && !isHost;
+    list.innerHTML = window.gameState.players.map((name, idx) => {
+        const isHost = idx === 0;
+        const canRemove = window.gameState.players.length > window.CONFIG.minPlayers && !isHost;
         return `
         <div class="player-input-row">
-            <input type="text" class="player-input ${isHost ? 'host' : ''}" value="${escapeHtml(name)}"
-                   placeholder="${isHost ? 'Gastgeberin' : 'Spielerin ' + (index + 1)}"
-                   oninput="updatePlayerName(${index}, this.value)"
-                   autocomplete="off" autocorrect="off" autocapitalize="off">
-            <button class="player-remove" onclick="removePlayer(${index})" ${!canRemove ? 'disabled' : ''}
+            <input type="text" class="player-input ${isHost ? 'host' : ''}" value="${window.escapeHtml(name)}"
+                   placeholder="${isHost ? 'Gastgeberin' : 'Spielerin ' + (idx + 1)}"
+                   onchange="window.gameState.players[${idx}] = this.value"
+                   autocomplete="off">
+            <button class="player-remove" onclick="window.removePlayer(${idx})" 
+                    ${!canRemove ? 'disabled' : ''} 
                     style="${!canRemove ? 'opacity:0;pointer-events:none;' : ''}">×</button>
         </div>`;
     }).join('');
+    counter.textContent = `${window.gameState.players.length} Spielerinnen (min. ${window.CONFIG.minPlayers})`;
+};
 
-    counter.textContent = `${gameState.players.length} Spielerinnen (min. ${CONFIG.minPlayers}, max. ${CONFIG.maxPlayers})`;
-    addBtn.style.display = gameState.players.length >= CONFIG.maxPlayers ? 'none' : 'block';
-}
-
-function updatePlayerName(index, value) { gameState.players[index] = value; }
-function addPlayer() {
-    if (gameState.players.length < CONFIG.maxPlayers) {
-        gameState.players.push(""); renderPlayerInputs();
-        setTimeout(() => { const inputs = document.querySelectorAll('.player-input'); inputs[inputs.length - 1]?.focus(); }, 100);
+window.addPlayer = function() {
+    if (window.gameState.players.length < window.CONFIG.maxPlayers) {
+        window.gameState.players.push("");
+        window.renderPlayers();
     }
-}
-function removePlayer(index) {
-    if (gameState.players.length > CONFIG.minPlayers && index !== 0) {
-        gameState.players.splice(index, 1); renderPlayerInputs();
+};
+
+window.removePlayer = function(idx) {
+    if (window.gameState.players.length > window.CONFIG.minPlayers && idx !== 0) {
+        window.gameState.players.splice(idx, 1);
+        window.renderPlayers();
     }
-}
+};
 
-// ====================== AUTH ======================
-function authenticate() {
-    const input = document.getElementById('accessCode').value;
-    if (input === CONFIG.fullAccessCode) {
-        gameState.fullAccess = true; 
-        try { localStorage.setItem('ff_access', 'full'); } catch(e) { console.warn('Storage blocked'); }
-        initPlayerSetup(); showScreen('setupScreen');
-    } else if (input === CONFIG.betaCode) {
-        enterBetaMode();
-    } else {
-        const btn = document.querySelector('#authScreen .btn');
-        btn.style.animation = 'shake 0.5s'; 
-        setTimeout(() => btn.style.animation = '', 500);
-        showModal("Zugang verweigert", "Falscher Code. Demo oder Beta verfügbar.");
+window.startGameSetup = function() {
+    document.querySelectorAll('.player-input').forEach((el, i) => {
+        window.gameState.players[i] = el.value.trim();
+    });
+    const filled = window.gameState.players.filter(p => p.trim() !== '').length;
+    if (filled < window.CONFIG.minPlayers) {
+        window.showModal("Zu wenig Spielerinnen", `Mindestens ${window.CONFIG.minPlayers} Namen eingeben.`);
+        return;
     }
-}
+    window.gameState.players = window.gameState.players.map((p, i) => p.trim() === '' ? `Spielerin ${i + 1}` : p.trim());
+    window.gameState.currentPlayerIndex = window.gameState.players.length > 1 ? 1 : 0;
+    window.gameState.turnCount = 1;
+    window.showScreen('disciplineScreen');
+    window.renderDisciplines();
+    window.updateProgress();
+};
 
-function enterBetaMode() {
-    gameState.betaMode = true; 
-    try { localStorage.setItem('ff_access', 'beta'); } catch(e) { console.warn('Storage blocked'); }
-    showScreen('betaScreen'); initBotUI();
-}
-
-function startDemo() {
-    gameState.fullAccess = false; 
-    try { localStorage.setItem('ff_access', 'demo'); } catch(e) { console.warn('Storage blocked'); }
-    initPlayerSetup(); showScreen('setupScreen');
-}
-
-function startGameSetup() {
-    document.querySelectorAll('.player-input').forEach((el, i) => { gameState.players[i] = el.value.trim(); });
-    const filledCount = gameState.players.filter(p => p.trim() !== '').length;
-    if (filledCount < CONFIG.minPlayers) { showModal("Zu wenig Spielerinnen", `Mindestens ${CONFIG.minPlayers} Namen eingeben.`); return; }
-    gameState.players = gameState.players.map((p, i) => p.trim() === '' ? `Spielerin ${i + 1}` : p.trim());
-    gameState.currentPlayerIndex = gameState.players.length > 1 ? 1 : 0; 
-    gameState.turnCount = 1;
-    showScreen('disciplineScreen'); renderDisciplines(); updateProgress();
-}
-
-// ====================== DISZIPLINEN ======================
-function renderDisciplines() {
+// ====================== DISCIPLINES ======================
+window.renderDisciplines = function() {
     const grid = document.getElementById('disciplineGrid');
     const disciplines = [
         {id: 1, name: "Swipe-Test", unlocks: "Geschenkband", req: 0},
@@ -848,231 +641,229 @@ function renderDisciplines() {
     ];
 
     grid.innerHTML = disciplines.map(d => {
-        const completed = gameState.completedDisciplines.includes(d.id);
-        const locked = !isDisciplineUnlocked(d.id);
+        const completed = window.gameState.completedDisciplines.includes(d.id);
+        const locked = d.id === 1 ? false : 
+                      d.id === 2 ? !window.gameState.completedDisciplines.includes(1) :
+                      d.id === 3 ? !window.gameState.completedDisciplines.includes(2) :
+                      !(window.gameState.fullAccess || window.gameState.completedDisciplines.length >= 3);
+        
         return `
-        <div class="discipline-card ${completed ? 'active' : ''} ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startDiscipline(${d.id})`}">
-            <div style="font-family:Cinzel,serif;font-size:1.8rem;margin-bottom:0.25rem;">${d.id}</div>
-            <div style="font-size:1rem;letter-spacing:1px;margin-bottom:0.5rem;">${d.name}</div>
-            <div style="font-size:0.7rem;opacity:0.6;line-height:1.3;">
-                ${d.special && !gameState.fullAccess ? 'Code erforderlich' : completed ? 'Abgeschlossen' : `Freischaltet: ${d.unlocks}`}
+        <div class="discipline-card ${completed ? 'active' : ''} ${locked ? 'locked' : ''}" 
+             onclick="${locked ? '' : `window.startDiscipline(${d.id})`}">
+            <div style="font-family:Cinzel;font-size:1.8rem;">${d.id}</div>
+            <div style="font-size:1rem;letter-spacing:1px;">${d.name}</div>
+            <div style="font-size:0.7rem;opacity:0.6;">
+                ${d.special && !window.gameState.fullAccess && !completed ? 'Code erforderlich' : 
+                  completed ? '✓ Abgeschlossen' : `Freischaltet: ${d.unlocks}`}
             </div>
-            ${completed ? '<div style="position:absolute;top:10px;right:10px;color:var(--gold);font-size:1.2rem;">✓</div>' : ''}
         </div>`;
     }).join('');
-}
+};
 
-function isDisciplineUnlocked(id) {
-    if (id === 1) return true;
-    if (id === 2) return gameState.completedDisciplines.includes(1);
-    if (id === 3) return gameState.completedDisciplines.includes(2);
-    if (id === 4) return gameState.fullAccess || gameState.completedDisciplines.length >= 3;
-    return false;
-}
+window.startDiscipline = function(n) {
+    if (n === 1) window.initSwipeGame();
+    else if (n === 2) window.initQuiz();
+    else if (n === 3) window.initCasino();
+    else if (n === 4) { window.unlockAllModes(); window.startMainGame(); }
+};
 
-function startDiscipline(n) {
-    if (n === 1) initSwipeGame();
-    else if (n === 2) initQuiz();
-    else if (n === 3) initCasino();
-    else if (n === 4) { unlockAllModes(); startMainGame(); }
-    updateProgress();
-}
-
-function completeDiscipline(n) {
-    if (!gameState.completedDisciplines.includes(n)) gameState.completedDisciplines.push(n);
-    if (n === 1) gameState.unlockedModes.push('geschenkband');
-    if (n === 2) gameState.unlockedModes.push('inspektion');
-    if (n === 3) { gameState.unlockedModes.push('trio'); gameState.unlockedModes.push('kontrolle'); }
-    renderDisciplines(); updateProgress();
+window.completeDiscipline = function(n) {
+    if (!window.gameState.completedDisciplines.includes(n)) {
+        window.gameState.completedDisciplines.push(n);
+    }
+    if (n === 1) window.gameState.unlockedModes.push('geschenkband');
+    if (n === 2) window.gameState.unlockedModes.push('inspektion');
+    if (n === 3) { window.gameState.unlockedModes.push('trio'); window.gameState.unlockedModes.push('kontrolle'); }
+    window.renderDisciplines();
+    window.updateProgress();
     const names = ["", "Swipe-Test", "Wissen", "Risiko", "Ultima"];
-    gameState.pendingAfterModal = () => startMainGame();
-    showModal(`Disziplin ${n} gemeistert`, `„${names[n]}" abgeschlossen. Neue Modi verfügbar.`);
-}
+    window.gameState.pendingAfterModal = () => window.startMainGame();
+    window.showModal(`Disziplin ${n} gemeistert`, `„${names[n]}" abgeschlossen. Neue Modi verfügbar.`);
+};
 
 // ====================== SWIPE GAME ======================
-function initSwipeGame() {
-    swipeState.count = 0;
-    swipeState.active = true;
+window.initSwipeGame = function() {
+    window.swipeState = { count: 0, target: null, startX: 0, startY: 0, active: true };
     const screen = document.getElementById('swipeScreen');
-    const area = document.getElementById('swipeArea');
     screen.classList.add('active');
-    document.getElementById('swipePlayerName').textContent = gameState.players[gameState.currentPlayerIndex] || '—';
+    screen.style.display = 'flex';
+    document.getElementById('swipePlayerName').textContent = window.gameState.players[window.gameState.currentPlayerIndex] || '—';
     
-    // Event Listener mit {passive: true} für bessere Performance
-    area.addEventListener('touchstart', onSwipeTouchStart, {passive: true});
-    area.addEventListener('touchend', onSwipeTouchEnd, {passive: false});
-    area.addEventListener('mousedown', onSwipeMouseDown);
-    area.addEventListener('mouseup', onSwipeMouseUp);
+    const area = document.getElementById('swipeArea');
+    area.addEventListener('touchstart', window.handleTouchStart, {passive: false});
+    area.addEventListener('touchend', window.handleTouchEnd, {passive: false});
+    area.addEventListener('mousedown', window.handleMouseDown);
+    area.addEventListener('mouseup', window.handleMouseUp);
     
-    // FIX: Cleanup bei Popstate (Browser-Back)
-    window.addEventListener('popstate', endSwipeGameOnce);
-    
-    nextSwipe();
-}
+    window.nextSwipeRound();
+};
 
-// FIX: Einmaliger Cleanup-Handler
-function endSwipeGameOnce() {
-    if (swipeState.active) endSwipeGame();
-}
-
-function nextSwipe() {
-    if (!swipeState.active || swipeState.count >= 5) {
-        if (swipeState.active) {
-            setTimeout(() => { endSwipeGame(); completeDiscipline(1); }, 600);
+window.nextSwipeRound = function() {
+    if (!window.swipeState.active || window.swipeState.count >= 5) {
+        if (window.swipeState.active) {
+            setTimeout(() => {
+                window.endSwipeGame();
+                window.completeDiscipline(1);
+            }, 500);
         }
         return;
     }
+    const dirs = ['up', 'right', 'down', 'left'];
+    const arrows = ['↑', '→', '↓', '←'];
     const idx = Math.floor(Math.random() * 4);
-    swipeState.currentTarget = directions[idx];
-    const arrow = document.getElementById('swipeArrow');
-    arrow.textContent = arrows[idx]; arrow.className = 'swipe-arrow show';
-    document.getElementById('swipeProgress').textContent = `${swipeState.count} / 5`;
-    document.getElementById('swipeTarget').textContent = `Wische ${dirLabels[idx]}`;
-}
+    window.swipeState.target = dirs[idx];
+    document.getElementById('swipeArrow').textContent = arrows[idx];
+    document.getElementById('swipeArrow').classList.add('show');
+    document.getElementById('swipeProgress').textContent = `${window.swipeState.count} / 5`;
+};
 
-function onSwipeTouchStart(e) {
-    swipeState.startX = e.changedTouches[0].screenX;
-    swipeState.startY = e.changedTouches[0].screenY;
-}
-
-function onSwipeTouchEnd(e) {
+window.handleTouchStart = function(e) {
     e.preventDefault();
-    const dx = e.changedTouches[0].screenX - swipeState.startX;
-    const dy = e.changedTouches[0].screenY - swipeState.startY;
-    evaluateSwipe(dx, dy);
-}
+    window.swipeState.startX = e.changedTouches[0].screenX;
+    window.swipeState.startY = e.changedTouches[0].screenY;
+};
 
-function onSwipeMouseDown(e) {
-    swipeState.isMouseDown = true;
-    swipeState.startX = e.clientX;
-    swipeState.startY = e.clientY;
-}
+window.handleTouchEnd = function(e) {
+    e.preventDefault();
+    const dx = e.changedTouches[0].screenX - window.swipeState.startX;
+    const dy = e.changedTouches[0].screenY - window.swipeState.startY;
+    window.checkSwipe(dx, dy);
+};
 
-function onSwipeMouseUp(e) {
-    if (!swipeState.isMouseDown) return;
-    swipeState.isMouseDown = false;
-    const dx = e.clientX - swipeState.startX;
-    const dy = e.clientY - swipeState.startY;
-    evaluateSwipe(dx, dy);
-}
+window.handleMouseDown = function(e) {
+    window.swipeState.startX = e.clientX;
+    window.swipeState.startY = e.clientY;
+    window.swipeState.isMouseDown = true;
+};
 
-function evaluateSwipe(dx, dy) {
+window.handleMouseUp = function(e) {
+    if (!window.swipeState.isMouseDown) return;
+    window.swipeState.isMouseDown = false;
+    const dx = e.clientX - window.swipeState.startX;
+    const dy = e.clientY - window.swipeState.startY;
+    window.checkSwipe(dx, dy);
+};
+
+window.checkSwipe = function(dx, dy) {
     if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
     const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
-    if (dir === swipeState.currentTarget) {
-        swipeState.count++;
-        const arrow = document.getElementById('swipeArrow');
-        arrow.classList.remove('show');
-        setTimeout(nextSwipe, 300);
+    if (dir === window.swipeState.target) {
+        window.swipeState.count++;
+        document.getElementById('swipeArrow').classList.remove('show');
+        setTimeout(window.nextSwipeRound, 300);
     } else {
-        const arrow = document.getElementById('swipeArrow');
-        arrow.style.color = '#dc143c';
-        setTimeout(() => { arrow.style.color = ''; }, 400);
+        document.getElementById('swipeArrow').style.color = '#dc143c';
+        setTimeout(() => {
+            document.getElementById('swipeArrow').style.color = '';
+        }, 300);
     }
-}
+};
 
-function endSwipeGame() {
-    swipeState.active = false;
+window.endSwipeGame = function() {
+    window.swipeState.active = false;
     const screen = document.getElementById('swipeScreen');
-    const area = document.getElementById('swipeArea');
     screen.classList.remove('active');
-    area.removeEventListener('touchstart', onSwipeTouchStart);
-    area.removeEventListener('touchend', onSwipeTouchEnd);
-    area.removeEventListener('mousedown', onSwipeMouseDown);
-    area.removeEventListener('mouseup', onSwipeMouseUp);
-    window.removeEventListener('popstate', endSwipeGameOnce);
-}
+    screen.style.display = 'none';
+    const area = document.getElementById('swipeArea');
+    area.removeEventListener('touchstart', window.handleTouchStart);
+    area.removeEventListener('touchend', window.handleTouchEnd);
+    area.removeEventListener('mousedown', window.handleMouseDown);
+    area.removeEventListener('mouseup', window.handleMouseUp);
+};
 
 // ====================== QUIZ ======================
-function initQuiz() {
-    let correct = 0, currentQ = 0;
-    const questions = [
+window.initQuiz = function() {
+    window.showScreen('quizScreen');
+    window.quizCorrect = 0;
+    window.quizCurrent = 0;
+    window.quizQuestions = [
         {q: "Was ist die Safeword-Regel?", a: ["Stop sofort", "Weitermachen", "Pause"], correct: 0},
         {q: "Wer bestimmt bei GOLD?", a: ["Gastgeberin", "Gast", "Würfel"], correct: 0},
         {q: "Maximale Intensität?", a: ["III", "II", "I"], correct: 0}
     ];
+    window.showQuizQuestion();
+};
 
-    const answerCallback = (isCorrect) => {
-        if (isCorrect) correct++;
-        currentQ++;
-        closeModal();
-        setTimeout(() => askQuestion(), 300);
-    };
-
-    const askQuestion = () => {
-        if (currentQ >= 3) {
-            if (correct >= 2) { 
-                gameState.pendingAfterModal = null; 
-                completeDiscipline(2); 
-            } else { 
-                showModal("Nicht bestanden", `Nur ${correct}/3 richtig. Wiederholen?`, true);
-                gameState.pendingAfterModal = () => initQuiz(); 
-            }
-            return;
+window.showQuizQuestion = function() {
+    if (window.quizCurrent >= 3) {
+        if (window.quizCorrect >= 2) {
+            window.gameState.pendingAfterModal = null;
+            window.completeDiscipline(2);
+        } else {
+            window.gameState.pendingAfterModal = () => window.initQuiz();
+            window.showModal("Nicht bestanden", `Nur ${window.quizCorrect}/3 richtig. Wiederholen?`);
         }
-        const q = questions[currentQ];
-        const answersHtml = q.a.map((ans, idx) =>
-            `<button onclick="window._currentQuizCallback(${idx === q.correct})" style="display:block;width:100%;margin-bottom:8px;padding:10px;background:#111;border:1px solid var(--gold);color:var(--silk);border-radius:6px;cursor:pointer;">${ans}</button>`
-        ).join('');
-        showModal(`Frage ${currentQ + 1}/3`, answersHtml, false);
-    };
+        return;
+    }
+    const q = window.quizQuestions[window.quizCurrent];
+    document.getElementById('quizQuestion').textContent = q.q;
+    document.getElementById('quizAnswers').innerHTML = q.a.map((ans, idx) => 
+        `<button onclick="window.answerQuiz(${idx === q.correct})" class="btn" style="width:100%;margin-bottom:8px;font-size:0.9rem;">${ans}</button>`
+    ).join('');
+};
 
-    // FIX: Eindeutiger Callback-Name pro Instanz
-    window._currentQuizCallback = answerCallback;
-    askQuestion();
-}
+window.answerQuiz = function(isCorrect) {
+    if (isCorrect) window.quizCorrect++;
+    window.quizCurrent++;
+    window.showQuizQuestion();
+};
 
 // ====================== CASINO ======================
-function initCasino() {
-    const card1 = Math.floor(Math.random() * 10) + 1;
-    const card2 = Math.floor(Math.random() * 10) + 1;
-    const sum = card1 + card2;
+window.initCasino = function() {
+    window.showScreen('casinoScreen');
+    document.getElementById('casinoResult').innerHTML = 'Bereit zu ziehen...<br><br>Benötigt: Summe ≥ 10';
+    document.getElementById('casinoBtn').style.display = 'block';
+};
+
+window.spinCasino = function() {
+    const c1 = Math.floor(Math.random() * 10) + 1;
+    const c2 = Math.floor(Math.random() * 10) + 1;
+    const sum = c1 + c2;
     const win = sum >= 10;
-    const text = `Gezogen: ${card1} + ${card2} = <b style="color:${win ? 'var(--emerald)' : '#dc143c'}">${sum}</b><br><br>${win ? '✓ Disziplin bestanden!' : '✗ Summe < 10 – nochmals versuchen'}`;
-    
-    if (win) { 
-        gameState.pendingAfterModal = () => completeDiscipline(3); 
-    } else {
-        gameState.pendingAfterModal = () => initCasino();
+    const color = win ? 'var(--emerald)' : '#dc143c';
+    document.getElementById('casinoResult').innerHTML = 
+        `${c1} + ${c2} = <b style="color:${color};font-size:2rem;">${sum}</b><br><br>` +
+        (win ? '✓ Bestanden!' : '✗ Zu niedrig – nochmals versuchen');
+    document.getElementById('casinoBtn').style.display = win ? 'none' : 'block';
+    if (win) {
+        setTimeout(() => {
+            window.completeDiscipline(3);
+        }, 1500);
     }
-    showModal("Disziplin III • Risiko", text, true);
-}
+};
 
-// ====================== HAUPTSPIEL ======================
-function unlockAllModes() { gameState.unlockedModes = ['geschenkband', 'inspektion', 'trio', 'kontrolle']; }
+// ====================== MAIN GAME ======================
+window.unlockAllModes = function() {
+    window.gameState.unlockedModes = ['geschenkband', 'inspektion', 'trio', 'kontrolle'];
+};
 
-function startMainGame() {
-    showScreen('gameScreen');
-    updatePlayerDisplay();
-    renderModeSelector();
-    updateProgress();
+window.startMainGame = function() {
+    window.showScreen('gameScreen');
+    window.updatePlayerDisplay();
+    window.renderModeSelector();
+    window.updateProgress();
     document.getElementById('statusLine').textContent = "Wähle einen Modus";
     document.getElementById('taskCard').style.display = 'none';
     document.getElementById('wheelContainer').style.display = 'none';
     document.getElementById('nextPlayerHint').style.display = 'none';
     document.getElementById('intensityBar').style.display = 'none';
-}
+};
 
-function updatePlayerDisplay() {
-    const currentName = gameState.players[gameState.currentPlayerIndex] || '—';
-    const nameEl = document.getElementById('currentPlayerName');
-    nameEl.innerHTML = `${escapeHtml(currentName)}<span class="player-turn-badge">Zug ${gameState.turnCount}</span>`;
-    const avatarsContainer = document.getElementById('playerAvatars');
-    avatarsContainer.innerHTML = gameState.players.map((name, idx) => {
-        const isActive = idx === gameState.currentPlayerIndex;
-        return `<div class="avatar ${isActive ? 'active' : ''}" title="${escapeHtml(name)}">${name.charAt(0).toUpperCase()}</div>`;
+window.updatePlayerDisplay = function() {
+    const current = window.gameState.players[window.gameState.currentPlayerIndex] || '—';
+    document.getElementById('currentPlayerName').innerHTML = 
+        `${window.escapeHtml(current)}<span style="font-size:0.6rem;color:rgba(212,175,55,0.7);margin-left:8px;">Zug ${window.gameState.turnCount}</span>`;
+    
+    document.getElementById('playerAvatars').innerHTML = window.gameState.players.map((name, idx) => {
+        const active = idx === window.gameState.currentPlayerIndex;
+        return `<div style="width:32px;height:32px;border-radius:50%;background:${active ? 'var(--gold)' : 'var(--burgund)'};color:${active ? '#000' : '#fff'};display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;margin-left:-8px;border:2px solid var(--gold);z-index:${active ? 10 : 1};">${name.charAt(0)}</div>`;
     }).join('');
-    const nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
-    document.getElementById('nextPlayerName').textContent = gameState.players[nextIndex] || '';
-}
+    
+    const nextIdx = (window.gameState.currentPlayerIndex + 1) % window.gameState.players.length;
+    document.getElementById('nextPlayerName').textContent = window.gameState.players[nextIdx] || '';
+};
 
-function nextPlayer() {
-    gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
-    if (gameState.currentPlayerIndex === 0) gameState.turnCount++;
-    updatePlayerDisplay();
-}
-
-function renderModeSelector() {
+window.renderModeSelector = function() {
     const container = document.getElementById('modeSelector');
     const modes = [
         {id: 'geschenkband', name: 'GESCHENKBAND', icon: '🎀'},
@@ -1082,236 +873,150 @@ function renderModeSelector() {
     ];
 
     container.innerHTML = modes.map(m => {
-        const unlocked = gameState.unlockedModes.includes(m.id);
-        const available = unlocked && (m.id !== 'trio' || gameState.players.length >= 3);
-        const isActive = gameState.currentMode === m.id;
+        const unlocked = window.gameState.unlockedModes.includes(m.id);
+        const available = unlocked && (m.id !== 'trio' || window.gameState.players.length >= 3);
+        const active = window.gameState.currentMode === m.id;
         return `
-        <div onclick="${available ? `selectMode('${m.id}')` : ''}" class="${isActive ? 'active' : ''} ${!available ? 'locked' : ''}">
-            <div style="font-size:1.5rem;margin-bottom:0.25rem;">${m.icon}</div>
-            <div style="font-size:0.8rem;letter-spacing:1px;">${m.name}</div>
-            ${m.id === 'trio' && gameState.players.length < 3 ? '<div style="font-size:0.6rem;color:#dc143c;margin-top:4px;">Benötigt 3+</div>' : ''}
+        <div onclick="${available ? `window.selectMode('${m.id}')` : ''}" 
+             style="${active ? 'border-color:var(--gold);background:rgba(212,175,55,0.2);' : ''}${!available ? 'opacity:0.3;pointer-events:none;' : ''}padding:1rem;border:1px solid rgba(212,175,55,0.3);border-radius:8px;text-align:center;cursor:pointer;">
+            <div style="font-size:1.5rem;">${m.icon}</div>
+            <div style="font-family:Cinzel;font-size:0.8rem;">${m.name}</div>
+            ${m.id === 'trio' && window.gameState.players.length < 3 ? '<div style="font-size:0.6rem;color:#dc143c;">3+ nötig</div>' : ''}
         </div>`;
     }).join('');
-}
+};
 
-function selectMode(mode) {
-    gameState.currentMode = mode;
-    renderModeSelector();
+window.selectMode = function(mode) {
+    window.gameState.currentMode = mode;
+    window.renderModeSelector();
     document.getElementById('taskCard').style.display = 'block';
     document.getElementById('wheelContainer').style.display = 'none';
     document.getElementById('nextPlayerHint').style.display = 'none';
     document.getElementById('intensityBar').style.display = 'flex';
-    gameState.currentIntensity = 1;
-    updateIntensityDisplay();
-    loadNewTask();
-    const modeNames = {geschenkband: 'GESCHENKBAND', inspektion: 'INSPEKTION', trio: 'TRIO', kontrolle: 'KONTROLLE'};
-    document.getElementById('statusLine').textContent = `${modeNames[mode]} • ${gameState.players[gameState.currentPlayerIndex]} ist dran`;
-}
+    window.gameState.currentIntensity = 1;
+    window.updateIntensityDisplay();
+    window.loadTask();
+    const names = {geschenkband: 'GESCHENKBAND', inspektion: 'INSPEKTION', trio: 'TRIO', kontrolle: 'KONTROLLE'};
+    document.getElementById('statusLine').textContent = `${names[mode]} • ${window.gameState.players[window.gameState.currentPlayerIndex]} ist dran`;
+};
 
-// FIX: Defensive Programmierung
-function loadNewTask() {
-    if (!gameState.currentMode) {
-        console.error('No mode selected');
-        return;
-    }
-    if (!taskDB[gameState.currentMode]) {
-        console.error('Invalid mode:', gameState.currentMode);
-        return;
-    }
-    const pool = taskDB[gameState.currentMode][gameState.currentIntensity];
-    if (!pool || pool.length === 0) {
-        console.error('No tasks for intensity', gameState.currentIntensity, 'in mode', gameState.currentMode);
-        return;
+window.updateIntensityDisplay = function() {
+    document.querySelectorAll('.intensity-dot').forEach((el, i) => {
+        el.classList.toggle('active', i + 1 === window.gameState.currentIntensity);
+    });
+};
+
+window.setIntensity = function(lvl) {
+    window.gameState.currentIntensity = lvl;
+    window.updateIntensityDisplay();
+    window.loadTask();
+};
+
+window.loadTask = function() {
+    const mode = window.gameState.currentMode;
+    const intensity = window.gameState.currentIntensity;
+    if (!window.taskDB[mode] || !window.taskDB[mode][intensity]) return;
+    
+    const pool = window.taskDB[mode][intensity];
+    let task = pool[Math.floor(Math.random() * pool.length)];
+    
+    if (mode === 'trio' && window.gameState.players.length > 3) {
+        const others = window.gameState.players.filter((_, i) => i !== window.gameState.currentPlayerIndex);
+        const selected = others.sort(() => Math.random() - 0.5).slice(0, 2);
+        task += `<br><br><span style="color:var(--gold);font-size:0.85rem;">Mit: ${selected.join(', ')}</span>`;
     }
     
-    let task = pool[Math.floor(Math.random() * pool.length)];
-    if (gameState.currentMode === 'trio' && gameState.players.length > 3) {
-        const others = gameState.players.filter((_, idx) => idx !== gameState.currentPlayerIndex);
-        const selected = shuffleArray([...others]).slice(0, 2);
-        task += `<br><br><span style="color:var(--gold);font-size:0.85rem;">Aktives Trio: ${[gameState.players[gameState.currentPlayerIndex], ...selected].map(escapeHtml).join(', ')}</span>`;
-    }
-    gameState.currentTask = task;
-    document.getElementById('taskCategory').textContent = `${gameState.currentMode.toUpperCase()} • STUFE ${['I','II','III'][gameState.currentIntensity - 1]}`;
+    document.getElementById('taskCategory').textContent = `${mode.toUpperCase()} • STUFE ${['I','II','III'][intensity-1]}`;
     document.getElementById('taskText').innerHTML = task;
+};
+
+window.completeTask = function() {
     const btn = document.querySelector('.complete-btn');
-    if (btn) { btn.innerHTML = 'AUFGABE ABGESCHLOSSEN'; btn.style.background = 'transparent'; btn.style.color = 'var(--emerald)'; btn.disabled = false; }
-}
-
-function shuffleArray(array) { 
-    for (let i = array.length - 1; i > 0; i--) { 
-        const j = Math.floor(Math.random() * (i + 1)); 
-        [array[i], array[j]] = [array[j], array[i]]; 
-    } 
-    return array; 
-}
-
-function setIntensity(lvl) { 
-    gameState.currentIntensity = lvl; 
-    updateIntensityDisplay(); 
-    if (gameState.currentMode) loadNewTask(); 
-}
-
-function updateIntensityDisplay() { 
-    document.querySelectorAll('.intensity-dot').forEach((el, i) => { 
-        el.classList.toggle('active', i + 1 === gameState.currentIntensity); 
-    }); 
-}
-
-function completeTask() {
-    const btn = document.querySelector('.complete-btn');
-    btn.innerHTML = '✓ ABGESCHLOSSEN'; btn.style.background = 'var(--emerald)'; btn.style.color = '#000'; btn.disabled = true;
+    btn.innerHTML = '✓ ABGESCHLOSSEN';
+    btn.style.background = 'var(--emerald)';
+    btn.style.color = '#000';
     setTimeout(() => {
         document.getElementById('wheelContainer').style.display = 'block';
         document.getElementById('nextPlayerHint').style.display = 'block';
         document.getElementById('taskCard').style.display = 'none';
+        btn.innerHTML = 'AUFGABE ABGESCHLOSSEN';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--emerald)';
     }, 800);
-}
+};
 
-// FIX: Wheel Winkel normalisieren für Performance
-function spinRewardWheel() {
+window.spinWheel = function() {
     const wheel = document.getElementById('wheel');
-    const spinBtn = document.getElementById('spinBtn');
-    spinBtn.disabled = true;
-    const targetSegment = Math.floor(Math.random() * 4);
+    const btn = document.getElementById('spinBtn');
+    btn.disabled = true;
+    const target = Math.floor(Math.random() * 4);
     const spins = 5 + Math.floor(Math.random() * 4);
-    const segmentDeg = targetSegment * 90 + 45;
-    const addedAngle = spins * 360 + segmentDeg;
-    
-    // FIX: Winkel normalisieren um Overflow zu vermeiden (max 3600deg = 10 Umdrehungen "History")
-    gameState.cumulativeWheelAngle = (gameState.cumulativeWheelAngle + addedAngle) % 3600;
+    const segmentDeg = target * 90 + 45;
+    const added = spins * 360 + segmentDeg;
+    window.gameState.wheelAngle = (window.gameState.wheelAngle + added) % 3600;
     
     wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-    wheel.style.transform = `rotate(${gameState.cumulativeWheelAngle}deg)`;
+    wheel.style.transform = `rotate(${window.gameState.wheelAngle}deg)`;
     
     setTimeout(() => {
-        const result = wheelResults[targetSegment];
-        if (result.label === "CRIMSON" && gameState.currentIntensity < 3) { 
-            gameState.currentIntensity++; 
-            updateIntensityDisplay(); 
+        const res = window.wheelResults[target];
+        if (res.label === "CRIMSON" && window.gameState.currentIntensity < 3) {
+            window.gameState.currentIntensity++;
+            window.updateIntensityDisplay();
         }
-        gameState.pendingAfterModal = () => {
-            nextPlayer(); 
-            renderModeSelector();
+        window.gameState.pendingAfterModal = () => {
+            window.nextPlayer();
+            window.renderModeSelector();
             document.getElementById('wheelContainer').style.display = 'none';
             document.getElementById('nextPlayerHint').style.display = 'none';
             document.getElementById('taskCard').style.display = 'block';
-            loadNewTask(); 
-            spinBtn.disabled = false;
+            window.loadTask();
+            btn.disabled = false;
         };
-        showModal(result.label, result.text);
+        window.showModal(res.label, res.text);
     }, 4200);
-}
+};
 
-// ====================== TSTBT UI ======================
-function initBotUI() {
-    const statsContainer = document.getElementById('botStatsDisplay');
-    statsContainer.innerHTML = botArmy.bots.slice(0, 6).map(b => 
-        `<div class="bot-stat"><div class="bot-indicator"></div>Bot ${b.id}</div>`
-    ).join('');
-    logToBotUI('🟢 Bot Army initialized (30 units)'); 
-    logToBotUI('🟢 Stochastic Engine ready');
-}
-
-function updateBotStats(active, totalActions) {
-    document.getElementById('botArmyStatus').innerHTML = `<div class="bot-indicator"></div>ACTIVE (${active})`;
-    document.getElementById('loadVal').textContent = Math.min(100, Math.floor(totalActions / 10)) + '%';
-    document.getElementById('stressFill').style.width = Math.min(100, totalActions / 2) + '%';
-}
-
-function updateStochasticMetrics(engine) {
-    document.getElementById('entropyVal').textContent = engine.entropy.toFixed(2);
-    document.getElementById('chaosVal').textContent = (Math.random() * 0.5).toFixed(2);
-    const sync = 100 - Math.floor(Math.random() * 15);
-    document.getElementById('syncVal').textContent = sync + '%';
-    document.getElementById('syncVal').style.color = sync > 90 ? 'var(--neon)' : '#ff6b6b';
-}
-
-function logToBotUI(msg) {
-    const container = document.getElementById('botLogContainer');
-    const entry = document.createElement('div'); 
-    entry.className = 'bot-log';
-    const time = new Date().toLocaleTimeString('de-DE', {hour12:false});
-    entry.textContent = `[${time}] ${msg}`; 
-    entry.style.opacity = '1';
-    container.appendChild(entry); 
-    container.scrollTop = container.scrollHeight;
-}
-
-function clearBotLogs() { 
-    document.getElementById('botLogContainer').innerHTML = '<div class="bot-log" style="opacity:0.5;">Log cleared...</div>'; 
-}
-
-async function runBotSimulation(protocol) { 
-    logToBotUI(`▶ Starting ${protocol}...`); 
-    await botArmy.runTest(protocol, 8000); 
-}
+window.nextPlayer = function() {
+    window.gameState.currentPlayerIndex = (window.gameState.currentPlayerIndex + 1) % window.gameState.players.length;
+    if (window.gameState.currentPlayerIndex === 0) window.gameState.turnCount++;
+    window.updatePlayerDisplay();
+};
 
 // ====================== SYSTEM ======================
-function updateProgress() {
-    let foundNext = false;
-    document.querySelectorAll('.progress-step').forEach((el, i) => {
-        const discipline = i + 1;
-        const done = gameState.completedDisciplines.includes(discipline);
-        el.classList.toggle('completed', done);
-        const isNext = !done && !foundNext;
-        el.classList.toggle('active', isNext);
-        if (isNext) foundNext = true;
+window.updateProgress = function() {
+    [1,2,3,4].forEach(i => {
+        const el = document.getElementById('prog' + i);
+        el.classList.toggle('completed', window.gameState.completedDisciplines.includes(i));
     });
-}
+};
 
-// FIX: data-closeable Attribut handling
-function showModal(title, text, closeable = true) {
-    const modal = document.getElementById('successModal');
-    document.getElementById('modalTitle').innerHTML = title;
-    document.getElementById('modalText').innerHTML = text;
-    const btn = document.getElementById('modalBtn');
-    btn.style.display = closeable ? 'block' : 'none';
-    modal.dataset.closeable = closeable ? "true" : "false";
-    modal.style.display = 'flex';
-}
+window.triggerSafeWord = function() {
+    if (window.swipeState.active) window.endSwipeGame();
+    window.gameState.pendingAfterModal = null;
+    window.showModal("SAFE WORD", "Sofortiger Stopp. 5 Minuten Pause empfohlen.");
+};
 
-function closeModal() {
-    document.getElementById('successModal').style.display = 'none';
-    if (typeof gameState.pendingAfterModal === 'function') {
-        const fn = gameState.pendingAfterModal; 
-        gameState.pendingAfterModal = null; 
-        setTimeout(fn, 50);
-    }
-}
-
-function triggerSafeWord() {
-    // FIX: Swipe Game auch beenden wenn aktiv
-    if (swipeState.active) endSwipeGame();
-    gameState.pendingAfterModal = null;
-    showModal("SAFE WORD AKTIVIERT", "Sofortiger Stopp aller Aktivitäten.<br><br>5 Minuten Nachsorge empfohlen.");
-}
-
-function showScreen(id) { 
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-    document.getElementById(id).classList.add('active'); 
-}
-
-// ====================== SERVICE WORKER ======================
-function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        const swCode = `self.addEventListener('install',e=>e.waitUntil(caches.open('ff-v2').then(c=>c.addAll(['./'])).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
-        try {
-            const blob = new Blob([swCode], {type:'application/javascript'});
-            const url = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(url).then(() => console.log('%c[SW] Offline ready', 'color:#00ff88'));
-        } catch(e) { console.log('SW registration skipped'); }
-    }
-}
+// ====================== BETA TESTING ======================
+window.runTest = function(type) {
+    const log = document.getElementById('botLogs');
+    log.innerHTML += `<div class="bot-log">[${new Date().toLocaleTimeString()}] Test ${type} gestartet...</div>`;
+    let count = 0;
+    const interval = setInterval(() => {
+        count++;
+        log.innerHTML += `<div class="bot-log">Bot ${count} simuliert...</div>`;
+        log.scrollTop = log.scrollHeight;
+        if (count >= 5) clearInterval(interval);
+    }, 500);
+};
 
 // ====================== INIT ======================
-window.onload = () => {
-    console.log('%cFUNKENFLUG v2.4.1-FIXED', 'color:#d4af37;font-family:Cinzel,serif;font-size:14px;');
-    console.log('%cAI Bot Army • Offline PWA • 30 Stochastic Units', 'color:#00ff88;font-size:10px;');
-    initServiceWorker();
+window.onload = function() {
+    console.log('FUNKENFLUG v2.5 geladen');
     try {
         const saved = localStorage.getItem('ff_access');
-        if (saved === 'full') gameState.fullAccess = true;
-        if (saved === 'beta') gameState.betaMode = true;
+        if (saved === 'full') window.gameState.fullAccess = true;
+        if (saved === 'beta') window.gameState.betaMode = true;
     } catch(e) {}
 };
 </script>
