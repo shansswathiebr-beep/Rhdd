@@ -1,1473 +1,1551 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" dir="ltr">
 <head>
-  <meta charset="utf-8">
-  <title>FUNKENFLUG SwipeMatch - Casino Edition</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
-  <meta name="theme-color" content="#0A0A0A">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="description" content="Premium Roguelike: Swipe-Physics trifft Casino & Partyspiel-Elemente">
-  
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #0A0A0A;
-      --fg: #f5f7ff;
-      --gold: #D4AF37;
-      --gold-light: #F4E8C1;
-      --gold-dark: #AA8C2C;
-      --accent: #4fd1c5;
-      --hud: rgba(10,10,10,0.98);
-      --danger: #DC2626;
-      --casino-green: #0d4a1c;
-      --purple: #9333EA;
-      --lane: #1A1A1A;
-      --premium: #FFD700;
-    }
-    
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-    
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'Inter', sans-serif;
-      overflow: hidden;
-      touch-action: none;
-    }
-    
-    /* Premium Header */
-    .header {
-      position: fixed;
-      top: env(safe-area-inset-top);
-      left: 0;
-      right: 0;
-      padding: 10px 15px;
-      background: linear-gradient(180deg, #1A1A1A 0%, var(--bg) 100%);
-      border-bottom: 2px solid var(--gold);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-      height: 60px;
-    }
-    
-    .logo {
-      font-family: 'Cinzel', serif;
-      font-size: 1.2rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    .logo.premium {
-      background: linear-gradient(135deg, var(--premium) 0%, #fff 50%, var(--premium) 100%);
-      -webkit-background-clip: text;
-      animation: shimmer 2s infinite;
-    }
-    
-    @keyframes shimmer {
-      0%, 100% { filter: drop-shadow(0 0 5px rgba(255,215,0,0.5)); }
-      50% { filter: drop-shadow(0 0 15px rgba(255,215,0,0.8)); }
-    }
-    
-    .clothes-display {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1A1A1A;
-      border: 1px solid var(--gold-dark);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Cinzel', serif;
-    }
-    
-    .header-icons {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid var(--gold);
-      background: #1A1A1A;
-      color: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .icon-btn:hover {
-      background: var(--gold);
-      color: var(--bg);
-      transform: scale(1.1);
-    }
-    
-    .icon-btn.premium-active {
-      border-color: var(--premium);
-      color: var(--premium);
-      box-shadow: 0 0 10px rgba(255,215,0,0.3);
-    }
-    
-    /* HUD */
-    .hud {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
-      padding: 8px 20px;
-      background: var(--hud);
-      backdrop-filter: blur(10px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 600;
-      z-index: 99;
-      border-bottom: 1px solid rgba(212,175,55,0.2);
-    }
-    
-    .hud-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-    
-    .hud-label {
-      font-size: 10px;
-      opacity: 0.7;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--gold-dark);
-    }
-    
-    .hud-value {
-      color: var(--gold);
-      font-size: 18px;
-      font-variant-numeric: tabular-nums;
-      font-family: 'Cinzel', serif;
-    }
-    
-    /* Game Canvas */
-    #gameCanvas {
-      position: fixed;
-      top: 108px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: calc(100% - 108px);
-      touch-action: none;
-    }
-    
-    /* Screens */
-    .screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--bg);
-      z-index: 200;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      text-align: center;
-      overflow-y: auto;
-    }
-    
-    .screen.active {
-      display: flex;
-    }
-    
-    h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 32px;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, var(--gold), #fff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    
-    h2 {
-      font-family: 'Cinzel', serif;
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: var(--gold);
-    }
-    
-    p {
-      opacity: 0.8;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      max-width: 400px;
-    }
-    
-    /* Buttons */
-    .btn {
-      min-width: 140px;
-      min-height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-      color: var(--bg);
-      border: none;
-      font-family: 'Cinzel', serif;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      margin: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(212,175,55,0.3);
-    }
-    
-    .btn:hover, .btn:active {
-      transform: scale(0.96);
-      box-shadow: 0 6px 20px rgba(212,175,55,0.4);
-    }
-    
-    .btn.secondary {
-      background: transparent;
-      border: 2px solid var(--gold);
-      color: var(--gold);
-      box-shadow: none;
-    }
-    
-    .btn.casino {
-      background: linear-gradient(135deg, var(--casino-green) 0%, #1b5e2f 100%);
-      color: white;
-      border: 2px solid var(--gold);
-    }
-    
-    .btn.danger {
-      background: linear-gradient(135deg, var(--danger) 0%, #991b1b 100%);
-      color: white;
-    }
-    
-    /* Upgrade Cards */
-    .upgrade-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      width: 100%;
-      max-width: 600px;
-      margin: 20px 0;
-      overflow-y: auto;
-      max-height: 60vh;
-    }
-    
-    .upgrade-card {
-      background: var(--lane);
-      border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 16px;
-      padding: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-    }
-    
-    .upgrade-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-    }
-    
-    .upgrade-card h3 {
-      color: var(--gold);
-      margin-bottom: 8px;
-      font-family: 'Cinzel', serif;
-    }
-    
-    .upgrade-card p {
-      font-size: 14px;
-      opacity: 0.7;
-      margin-bottom: 12px;
-    }
-    
-    .upgrade-cost {
-      display: inline-block;
-      background: rgba(212,175,55,0.1);
-      color: var(--gold);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    
-    /* All In / Casino Interfaces */
-    .allin-card, .casino-card {
-      background: linear-gradient(135deg, #1f1a0a 0%, var(--lane) 100%);
-      border: 4px solid var(--premium);
-      border-radius: 20px;
-      padding: 30px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(255,215,0,0.3);
-      max-width: 400px;
-      width: 100%;
-    }
-    
-    .casino-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.5rem;
-      color: var(--premium);
-      margin-bottom: 15px;
-    }
-    
-    .bj-table {
-      background: linear-gradient(135deg, var(--casino-green) 0%, #0d3318 100%);
-      border: 4px solid var(--gold);
-      border-radius: 20px;
-      padding: 20px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
-    }
-    
-    .bj-hand {
-      background: rgba(0,0,0,0.4);
-      border-radius: 15px;
-      padding: 15px;
-      margin: 10px 0;
-      border: 2px solid rgba(255,215,0,0.3);
-    }
-    
-    .bj-cards {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      min-height: 80px;
-      align-items: center;
-    }
-    
-    .bj-card {
-      width: 60px;
-      height: 90px;
-      background: white;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      font-family: 'Cinzel', serif;
-    }
-    
-    .bj-card.red { color: #dc2626; }
-    .bj-card.black { color: #1f2937; }
-    .bj-card-value { font-size: 1.5rem; }
-    .bj-card-suit { font-size: 1.5rem; }
-    
-    .bj-controls {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 15px;
-    }
-    
-    .bj-btn {
-      padding: 10px 20px;
-      border: 2px solid var(--gold);
-      border-radius: 8px;
-      background: var(--lane);
-      color: var(--gold);
-      font-family: 'Cinzel', serif;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    
-    .bj-btn:hover {
-      background: var(--gold);
-      color: var(--bg);
-    }
-    
-    /* Quiz Interface */
-    .quiz-container {
-      background: var(--lane);
-      border: 2px solid var(--gold);
-      border-radius: 16px;
-      padding: 20px;
-      max-width: 500px;
-      width: 100%;
-    }
-    
-    .quiz-question {
-      font-size: 1.2rem;
-      color: var(--gold-light);
-      margin-bottom: 20px;
-      font-family: 'Cinzel', serif;
-    }
-    
-    .quiz-answers {
-      display: grid;
-      gap: 10px;
-    }
-    
-    .quiz-answer {
-      padding: 15px;
-      background: #2D2D2D;
-      border: 2px solid var(--gold-dark);
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s;
-    }
-    
-    .quiz-answer:hover {
-      border-color: var(--gold);
-      transform: translateX(5px);
-    }
-    
-    .quiz-answer.correct {
-      background: var(--casino-green);
-      border-color: #22c55e;
-    }
-    
-    .quiz-answer.wrong {
-      background: var(--danger);
-      border-color: #ef4444;
-    }
-    
-    /* Dice Interface */
-    .dice-container {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin: 30px 0;
-    }
-    
-    .dice {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(145deg, #f0f0f0, #cacaca);
-      border-radius: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-      color: #1f2937;
-      font-family: 'Cinzel', serif;
-    }
-    
-    .dice-label {
-      font-size: 0.7rem;
-      color: var(--gold-dark);
-      margin-top: 5px;
-    }
-    
-    /* Stats */
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin: 20px 0;
-      width: 100%;
-      max-width: 400px;
-    }
-    
-    .stat-box {
-      background: var(--lane);
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(212,175,55,0.2);
-    }
-    
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--gold);
-      font-family: 'Cinzel', serif;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      opacity: 0.6;
-      margin-top: 4px;
-      color: var(--gold-dark);
-    }
-    
-    /* Premium Screen */
-    .premium-container {
-      text-align: center;
-      max-width: 500px;
-    }
-    
-    .premium-title {
-      font-family: 'Cinzel', serif;
-      font-size: 2rem;
-      color: var(--premium);
-      margin-bottom: 10px;
-    }
-    
-    .premium-features {
-      background: var(--lane);
-      border: 2px solid var(--gold);
-      border-radius: 15px;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: left;
-    }
-    
-    .premium-feature {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      font-size: 0.95rem;
-    }
-    
-    .premium-key-input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid var(--gold);
-      background: var(--lane);
-      color: white;
-      border-radius: 8px;
-      margin: 10px 0;
-      text-align: center;
-      font-family: 'Cinzel', serif;
-      letter-spacing: 2px;
-    }
-    
-    .champion-bar {
-      background: rgba(0,0,0,0.5);
-      border: 2px solid var(--premium);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 15px;
-      text-align: center;
-      display: none;
-    }
-    
-    .champion-bar.active {
-      display: block;
-    }
-    
-    /* Animations */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.05); }
-    }
-    
-    .pulse {
-      animation: pulse 2s infinite;
-    }
-    
-    .allin-badge {
-      position: fixed;
-      top: 120px;
-      right: 20px;
-      background: var(--danger);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-family: 'Cinzel', serif;
-      animation: pulse 1s infinite;
-      z-index: 50;
-      display: none;
-    }
-    
-    .allin-badge.active {
-      display: block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6b0f1a">
+    <meta name="description" content="FUNKENFLUG: Johanna Weber Edition - Ein Disziplinen-System nach B.F. Skinner's Reiz-Belohnungs-Prinzip">
+    <title>FUNKENFLUG: Johanna Weber Edition | Disziplinen System</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;600&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --burgundy: #6b0f1a;
+            --crimson: #8b0000;
+            --gold: #d4af37;
+            --gold-light: #f5f0e6;
+            --black: #0a0a0a;
+            --dark: #1a0a0a;
+            --accent: #4fd1c5;
+            --danger: #DC2626;
+            --success: #16A34A;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        html, body {
+            height: 100%;
+            background: linear-gradient(135deg, var(--black) 0%, var(--dark) 50%, #2d0a0a 100%);
+            color: var(--gold-light);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        /* Watermark & Signature */
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.3;
+            font-size: 10px;
+            color: var(--gold);
+            pointer-events: none;
+            z-index: 1000;
+            text-align: right;
+            line-height: 1.2;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .tamil-sig {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            opacity: 0.2;
+            color: var(--gold);
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        /* Age Gate with Code Entry */
+        .age-gate {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(20px);
+            padding: 20px;
+        }
+        
+        .gate-content {
+            background: linear-gradient(145deg, var(--dark), #2d0a0a);
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(212,175,55,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gate-content::before {
+            content: 'JW';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 200px;
+            opacity: 0.03;
+            font-family: 'Cinzel', serif;
+            pointer-events: none;
+        }
+        
+        .gate-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            color: var(--gold);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .gate-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--burgundy);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .code-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(107,15,26,0.2);
+            border-radius: 12px;
+            border: 1px solid var(--burgundy);
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 8px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .code-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(212,175,55,0.3);
+            border-color: var(--gold-light);
+        }
+        
+        .code-input.unlocked {
+            border-color: var(--success);
+            color: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        /* Header System */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(10,10,10,0.98), rgba(26,10,10,0.95));
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+        }
+        
+        .logo-main {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .logo-main.jw-active {
+            background: linear-gradient(135deg, var(--crimson), var(--gold), var(--crimson));
+            -webkit-background-clip: text;
+            text-shadow: 0 0 30px rgba(139,0,0,0.5);
+        }
+        
+        .progress-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        
+        .progress-text {
+            font-size: 10px;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        
+        .progress-bar {
+            width: 120px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--crimson));
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--gold);
+        }
+        
+        .clothes-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(107,15,26,0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--burgundy);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+        }
+        
+        .clothes-indicator.danger {
+            border-color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+        
+        /* Screen Management */
+        .screen {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+            background: linear-gradient(180deg, var(--black), var(--dark));
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .screen.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        /* Discipline Chain (Reiz durch Progression) */
+        .discipline-hub {
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+        
+        .hub-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+        
+        .hub-subtitle {
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 40px;
+        }
+        
+        .discipline-chain {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .chain-line {
+            position: absolute;
+            left: 25px;
+            top: 40px;
+            bottom: 40px;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                var(--gold) 0%, 
+                var(--gold) var(--progress-percent, 0%), 
+                rgba(255,255,255,0.1) var(--progress-percent, 0%));
+            z-index: 0;
+            transition: all 0.5s;
+        }
+        
+        .discipline-node {
+            position: relative;
+            z-index: 1;
+            background: rgba(26,10,10,0.8);
+            border: 2px solid rgba(212,175,55,0.2);
+            border-radius: 16px;
+            padding: 25px 20px 25px 60px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .discipline-node.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+        }
+        
+        .discipline-node.unlocked {
+            border-color: var(--gold);
+            box-shadow: 0 4px 20px rgba(212,175,55,0.1);
+        }
+        
+        .discipline-node.unlocked:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(212,175,55,0.2);
+            border-color: var(--gold-light);
+        }
+        
+        .discipline-node.active {
+            border-color: var(--crimson);
+            background: linear-gradient(135deg, rgba(139,0,0,0.2), rgba(26,10,10,0.9));
+            animation: nodePulse 3s infinite;
+        }
+        
+        .discipline-node.mastered {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(22,163,74,0.1), rgba(26,10,10,0.9));
+        }
+        
+        @keyframes nodePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(139,0,0,0.2); }
+            50% { box-shadow: 0 0 40px rgba(139,0,0,0.4); }
+        }
+        
+        .node-number {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark);
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--gold);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .discipline-node.locked .node-number {
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.3);
+        }
+        
+        .discipline-node.mastered .node-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        .node-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        
+        .node-desc {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        
+        .node-reward {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            font-size: 0.75em;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Game Canvas for Arcade */
+        #gameCanvas {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            touch-action: none;
+        }
+        
+        /* Card Display System (Variable Ratio Belohnung) */
+        .card-system {
+            max-width: 600px;
+            margin: 0 auto;
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .mode-tab {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px;
+            background: rgba(107,15,26,0.2);
+            border: 1px solid var(--burgundy);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+        }
+        
+        .mode-tab.active {
+            background: rgba(212,175,55,0.1);
+            border-color: var(--gold);
+            color: var(--gold);
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+        
+        .intensity-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .intensity-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--burgundy);
+            background: transparent;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .intensity-btn.active {
+            border-color: var(--crimson);
+            background: var(--crimson);
+            box-shadow: 0 0 20px var(--crimson);
+            transform: scale(1.1);
+        }
+        
+        .intensity-btn::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .intensity-btn.active::after {
+            border-color: var(--gold);
+            animation: rotate 4s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .card-display {
+            flex: 1;
+            background: linear-gradient(145deg, rgba(107,15,26,0.3), rgba(0,0,0,0.5));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(212,175,55,0.05);
+        }
+        
+        .card-display::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(212,175,55,0.03) 10px,
+                rgba(212,175,55,0.03) 20px
+            );
+            pointer-events: none;
+        }
+        
+        .card-category {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--burgundy);
+        }
+        
+        .card-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: var(--gold-light);
+            font-style: italic;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s;
+        }
+        
+        .card-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .card-placeholder {
+            color: rgba(255,255,255,0.3);
+            font-style: italic;
+        }
+        
+        /* Wheel Container */
+        .wheel-section {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 300;
+            background: rgba(0,0,0,0.95);
+            padding: 40px;
+            border-radius: 30px;
+            border: 3px solid var(--gold);
+            display: none;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+        }
+        
+        .wheel-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .wheel-container {
+            width: 280px;
+            height: 280px;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 6px solid var(--gold);
+            background: conic-gradient(
+                var(--burgundy) 0deg 90deg,
+                var(--black) 90deg 180deg,
+                var(--crimson) 180deg 270deg,
+                var(--gold) 270deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 0 30px rgba(212,175,55,0.3);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--gold), var(--burgundy));
+            border-radius: 50%;
+            border: 3px solid var(--gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            color: var(--black);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gold), var(--crimson));
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 20;
+            filter: drop-shadow(0 0 10px rgba(212,175,55,0.8));
+        }
+        
+        /* Quiz Interface */
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .quiz-progress {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+        }
+        
+        .quiz-question {
+            background: rgba(107,15,26,0.2);
+            border: 1px solid var(--burgundy);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3em;
+            text-align: center;
+        }
+        
+        .quiz-answers {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .quiz-answer {
+            padding: 18px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--gold-dark);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 1em;
+        }
+        
+        .quiz-answer:hover {
+            border-color: var(--gold);
+            transform: translateX(5px);
+            background: rgba(212,175,55,0.05);
+        }
+        
+        .quiz-answer.correct {
+            background: rgba(22,163,74,0.2);
+            border-color: var(--success);
+            animation: correctPulse 0.5s;
+        }
+        
+        .quiz-answer.wrong {
+            background: rgba(220,38,38,0.2);
+            border-color: var(--danger);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        /* Casino Interface */
+        .casino-container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .bj-table {
+            background: linear-gradient(135deg, var(--casino-green), #0d3318);
+            border: 4px solid var(--gold);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .bj-hand {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        
+        .bj-cards {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            min-height: 80px;
+            align-items: center;
+        }
+        
+        .playing-card {
+            width: 60px;
+            height: 90px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            color: #1f2937;
+            animation: dealCard 0.3s ease-out;
+        }
+        
+        .playing-card.red {
+            color: #dc2626;
+        }
+        
+        @keyframes dealCard {
+            from { transform: translateY(-100px) rotate(180deg); opacity: 0; }
+            to { transform: translateY(0) rotate(0); opacity: 1; }
+        }
+        
+        .bj-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        /* Utility Classes */
+        .btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212,175,55,0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.secondary {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, var(--danger), #991b1b);
+            color: white;
+            border: none;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .wheel-container { width: 350px; height: 350px; }
+            .card-text { font-size: 1.5em; }
+            .discipline-node { padding-left: 80px; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="logo" id="headerLogo">âš¡ FUNKENFLUG</div>
-    <div class="clothes-display" id="clothesDisplay">
-      <span>ðŸ‘•</span>
-      <span id="clothesText">5/5</span>
-    </div>
-    <div class="header-icons">
-      <button class="icon-btn" onclick="game.showPremium()" id="premiumBtn" title="Premium">ðŸ‘‘</button>
-      <button class="icon-btn" onclick="game.showRules()" title="Regeln">ðŸ“œ</button>
-    </div>
-  </div>
+    <!-- Tamil Signature -->
+    <div class="tamil-sig">ரா<br>சுவாதி</div>
+    <div class="watermark">JW<br>EDITION<br>26101908</div>
 
-  <!-- HUD -->
-  <div class="hud">
-    <div class="hud-item">
-      <span class="hud-label">Score</span>
-      <span class="hud-value" id="scoreDisplay">0</span>
+    <!-- Age Gate & Access Control -->
+    <div class="age-gate" id="ageGate">
+        <div class="gate-content">
+            <div class="gate-title">FUNKENFLUG</div>
+            <div class="gate-subtitle">Johanna Weber Edition · Disziplinen System</div>
+            
+            <p style="font-size: 0.9em; line-height: 1.6; margin-bottom: 20px;">
+                Dieses Spiel enthält inhalte für Erwachsene (18+) und nutzt psychologische Reiz-Belohnungs-Mechanismen (Variable Ratio Schedule) zur Verhaltensmodifikation.
+            </p>
+            
+            <div class="code-section">
+                <div style="font-size: 0.8em; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Zugangscode</div>
+                <input type="text" class="code-input" id="accessCode" placeholder="••••••••" maxlength="8">
+                <div style="font-size: 0.75em; color: rgba(255,255,255,0.5); margin-top: 8px;">
+                    Hinweis: Code 26101908 für Vollzugriff
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn secondary" onclick="verifyAccess()" style="flex: 1;">Eintreten</button>
+                <button class="btn" onclick="enterStandard()" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.5);">Demo</button>
+            </div>
+        </div>
     </div>
-    <div class="hud-item">
-      <span class="hud-label">Streak</span>
-      <span class="hud-value" id="streakDisplay">0</span>
-    </div>
-    <div class="hud-item">
-      <span class="hud-label">Level</span>
-      <span class="hud-value" id="levelDisplay">1</span>
-    </div>
-    <div class="hud-item">
-      <span class="hud-label">Credits</span>
-      <span class="hud-value" id="creditsDisplay">0</span>
-    </div>
-  </div>
 
-  <!-- All In Badge -->
-  <div class="allin-badge" id="allinBadge">ðŸš¨ ALL IN!</div>
+    <!-- Main Header -->
+    <header class="main-header" id="mainHeader" style="display: none;">
+        <div class="logo-main" id="logoText">FUNKENFLUG</div>
+        
+        <div class="progress-container">
+            <div class="progress-text">Disziplin <span id="currentDiscipline">I</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="mainProgress" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <div class="clothes-indicator" id="clothesIndicator">
+            <span>👕</span>
+            <span id="clothesCount">5</span>
+        </div>
+    </header>
 
-  <!-- Game Canvas -->
-  <canvas id="gameCanvas"></canvas>
-
-  <!-- Menu Screen -->
-  <div id="menuScreen" class="screen active">
-    <h1>SwipeMatch</h1>
-    <p>Roguelike Arcade trifft Casino-Action<br>5 KleidungsstÃ¼cke. Ãœberlebe. Setze alles aufs Spiel.</p>
+    <!-- Screens -->
     
-    <div class="stats" id="menuStats">
-      <div class="stat-box">
-        <div class="stat-value" id="menuBest">0</div>
-        <div class="stat-label">Best Score</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value" id="menuRuns">0</div>
-        <div class="stat-label">Runs</div>
-      </div>
+    <!-- 1. Discipline Hub (Progression) -->
+    <div class="screen active" id="hubScreen" style="display: none;">
+        <div class="discipline-hub">
+            <h1 class="hub-title">Die Vier Disziplinen</h1>
+            <div class="hub-subtitle">Meistere jede Stufe, um die nächste zu enthüllen</div>
+            
+            <div class="discipline-chain">
+                <div class="chain-line" id="chainLine"></div>
+                
+                <!-- Disziplin I: Prüfung (Arcade) -->
+                <div class="discipline-node unlocked active" id="node1" onclick="enterDiscipline(1)">
+                    <div class="node-number">I</div>
+                    <div class="node-title">Die Prüfung</div>
+                    <div class="node-desc">Arcade-Survival. Weiche aus. Überlebe mit 5 Leben. Reaktionsschnelligkeit wird belohnt.</div>
+                    <div class="node-reward">Freischaltung: Quiz</div>
+                </div>
+                
+                <!-- Disziplin II: Wissen (Quiz) -->
+                <div class="discipline-node locked" id="node2" onclick="enterDiscipline(2)">
+                    <div class="node-number">II</div>
+                    <div class="node-title">Das Wissen</div>
+                    <div class="node-desc">Beantworte 3 von 3 Fragen richtig. Belohnung: Variable Ratio Schedule im Casino.</div>
+                    <div class="node-reward">Freischaltung: Casino</div>
+                </div>
+                
+                <!-- Disziplin III: Risiko (Casino) -->
+                <div class="discipline-node locked" id="node3" onclick="enterDiscipline(3)">
+                    <div class="node-number">III</div>
+                    <div class="node-title">Das Risiko</div>
+                    <div class="node-desc">Black Jack oder Würfel. Operante Konditionierung durch intermittierende Verstärkung.</div>
+                    <div class="node-reward">Freischaltung: JW Edition</div>
+                </div>
+                
+                <!-- Disziplin IV: Johanna Weber Edition -->
+                <div class="discipline-node locked" id="node4" onclick="enterDiscipline(4)">
+                    <div class="node-number">IV</div>
+                    <div class="node-title">Die Kunst</div>
+                    <div class="node-desc">Vier Modi: Geschenkband, Inspektion, Trio, Kontrolle. Variable Intensitätsstufen (1-3).</div>
+                    <div class="node-reward">Ultima Ratio</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-bottom: 40px;">
+                <button class="btn secondary" onclick="resetProgress()">Fortschritt zurücksetzen</button>
+            </div>
+        </div>
     </div>
 
-    <button class="btn" onclick="game.start()">Neuer Run</button>
-    <button class="btn secondary" onclick="game.showUpgrades()">Upgrades</button>
-    <button class="btn secondary" onclick="game.showCasino()">ðŸƒ Casino</button>
-    <button class="btn secondary" onclick="game.loadRun()" id="continueBtn" style="display: none;">Fortsetzen</button>
-  </div>
+    <!-- 2. Arcade Canvas -->
+    <canvas id="gameCanvas"></canvas>
 
-  <!-- Upgrades Screen -->
-  <div id="upgradeScreen" class="screen">
-    <h2>Upgrades</h2>
-    <p>Credits: <span id="upgradeCredits" style="color: var(--gold); font-family: Cinzel; font-weight: 700;">0</span></p>
-    
-    <div class="upgrade-grid" id="upgradeGrid"></div>
-    <button class="btn secondary" onclick="game.showMenu()">ZurÃ¼ck</button>
-  </div>
-
-  <!-- All In / Casino Screen -->
-  <div id="allinScreen" class="screen">
-    <div class="allin-card">
-      <div class="casino-title">ðŸš¨ ALL IN - WETTE ðŸš¨</div>
-      <div style="color: var(--danger); font-weight: bold; margin-bottom: 15px;">Nur noch 1 KleidungsstÃ¼ck!</div>
-      <p id="allinText">WÃ¤hle deine Rettung...</p>
+    <!-- 3. Quiz Interface -->
+    <div class="screen" id="quizScreen" style="display: none;">
+        <div class="quiz-container">
+            <div class="quiz-progress">Disziplin II · Frage <span id="qCurrent">1</span>/3</div>
+            <div class="quiz-question" id="qText">Lade Frage...</div>
+            <div class="quiz-answers" id="qAnswers"></div>
+            <div style="text-align: center; margin-top: 30px; color: rgba(255,255,255,0.5); font-size: 0.9em;">
+                Bei Fehler: Rückkehr zu Disziplin I
+            </div>
+        </div>
     </div>
-    
-    <button class="btn casino" onclick="game.startBlackJack()">ðŸƒ Black Jack Risk</button>
-    <button class="btn" onclick="game.startQuiz()">ðŸ§  Quiz Challenge</button>
-    <button class="btn" onclick="game.rollDice()" style="background: linear-gradient(135deg, var(--purple) 0%, #581c87 100%);">ðŸŽ² Schicksalswurf</button>
-    <button class="btn danger" onclick="game.surrender()">âœ— Aufgeben</button>
-  </div>
 
-  <!-- Black Jack Screen -->
-  <div id="blackjackScreen" class="screen">
-    <div class="bj-table">
-      <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid rgba(255,215,0,0.3); padding-bottom: 10px;">
-        <div style="font-family: Cinzel; font-size: 1.5rem; color: var(--premium);">â™ ï¸ BLACK JACK â™¥ï¸</div>
-        <div style="color: var(--gold-light); font-size: 0.9rem;" id="bjPotText">Einsatz: Video = +1 ðŸ‘•</div>
-      </div>
-      
-      <div class="champion-bar" id="bjChampionBar">
-        <div style="font-family: Cinzel; color: var(--premium);">ðŸ‘‘ Champion hÃ¤lt den Pott</div>
-      </div>
-
-      <div class="bj-hand">
-        <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 8px;">Dealer <span id="dealerScore" style="color: #888;"></span></div>
-        <div class="bj-cards" id="dealerCards"></div>
-      </div>
-      
-      <div id="bjResult" style="text-align: center; padding: 10px; font-family: Cinzel; font-size: 1.2rem; display: none;"></div>
-      
-      <div class="bj-hand">
-        <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 8px;">Du <span id="playerScore" style="color: #888;"></span></div>
-        <div class="bj-cards" id="playerCards"></div>
-      </div>
-      
-      <div class="bj-controls" id="bjControls">
-        <button class="bj-btn" onclick="game.bjHit()">ðŸŽ¯ Hit</button>
-        <button class="bj-btn" onclick="game.bjStand()">âœ‹ Stand</button>
-        <button class="bj-btn" onclick="game.bjDouble()">ðŸ’° Double</button>
-      </div>
-      
-      <button class="btn" id="bjContinueBtn" onclick="game.finishBlackJack()" style="display: none; width: 100%; margin-top: 10px;">Weiter</button>
+    <!-- 4. Casino Interface -->
+    <div class="screen" id="casinoScreen" style="display: none;">
+        <div class="casino-container">
+            <h2 style="font-family: 'Cinzel', serif; color: var(--gold); margin-bottom: 10px;">Disziplin III</h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Wähle deine Waffe</p>
+            
+            <div id="casinoMenu">
+                <button class="btn" onclick="startBlackJack()" style="margin-bottom: 15px; width: 80%;">🃏 Black Jack</button>
+                <button class="btn secondary" onclick="startDice()" style="width: 80%;">🎲 Schicksalswurf</button>
+            </div>
+            
+            <div id="bjGame" style="display: none;">
+                <div class="bj-table">
+                    <div style="color: var(--gold); font-size: 0.9em; margin-bottom: 10px;">Dealer</div>
+                    <div class="bj-cards" id="dealerCards"></div>
+                    
+                    <div style="margin: 20px 0; font-family: 'Cinzel'; color: var(--gold); font-size: 1.2em;" id="bjResult"></div>
+                    
+                    <div style="color: var(--gold); font-size: 0.9em; margin-bottom: 10px;">Du</div>
+                    <div class="bj-cards" id="playerCards"></div>
+                    
+                    <div class="bj-controls">
+                        <button class="btn secondary" onclick="bjHit()">Hit</button>
+                        <button class="btn secondary" onclick="bjStand()">Stand</button>
+                    </div>
+                </div>
+                <button class="btn" onclick="backToCasino()" style="margin-top: 20px;">Zurück</button>
+            </div>
+            
+            <div id="diceGame" style="display: none;">
+                <div style="display: flex; justify-content: center; gap: 30px; margin: 40px 0;">
+                    <div style="width: 80px; height: 80px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 2em; color: #1f2937; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" id="dice1">?</div>
+                    <div style="width: 80px; height: 80px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 2em; color: #1f2937; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" id="dice2">?</div>
+                </div>
+                <button class="btn" onclick="rollDice()">Würfeln</button>
+                <div id="diceResult" style="margin-top: 30px; font-size: 1.2em; color: var(--gold); min-height: 60px;"></div>
+                <button class="btn secondary" onclick="backToCasino()" style="margin-top: 20px;">Zurück</button>
+            </div>
+        </div>
     </div>
-    
-    <button class="btn secondary" onclick="game.backToAllIn()" style="margin-top: 20px;">ZurÃ¼ck</button>
-  </div>
 
-  <!-- Quiz Screen -->
-  <div id="quizScreen" class="screen">
-    <h2>ðŸ§  Quiz Challenge</h2>
-    <div class="quiz-container">
-      <div class="quiz-question" id="quizQuestion">Frage...</div>
-      <div class="quiz-answers" id="quizAnswers"></div>
+    <!-- 5. Johanna Weber Edition (Card System) -->
+    <div class="screen" id="jwScreen" style="display: none;">
+        <div class="card-system">
+            <!-- Mode Tabs -->
+            <div class="mode-tabs">
+                <div class="mode-tab active" onclick="setJwMode('gift')">Das Geschenkband</div>
+                <div class="mode-tab" onclick="setJwMode('inspection')">Die Inspektion</div>
+                <div class="mode-tab" onclick="setJwMode('trio')">Das Trio</div>
+                <div class="mode-tab" onclick="setJwMode('control')">Kontrolle</div>
+            </div>
+            
+            <!-- Intensity Selector (Reiz-Belohnung) -->
+            <div class="intensity-selector">
+                <button class="intensity-btn active" onclick="setIntensity(1)">1</button>
+                <button class="intensity-btn" onclick="setIntensity(2)">2</button>
+                <button class="intensity-btn" onclick="setIntensity(3)">3</button>
+            </div>
+            
+            <!-- Card Display -->
+            <div class="card-display" id="cardDisplay">
+                <div class="card-category" id="cardCategory">BEREIT</div>
+                <div class="card-text" id="cardText">
+                    <span class="card-placeholder">Berühre "Karte ziehen" um die Aufgabe zu enthüllen...</span>
+                </div>
+            </div>
+            
+            <!-- Controls -->
+            <div style="display: flex; gap: 15px; margin-top: 20px; margin-bottom: 40px;">
+                <button class="btn" onclick="drawJwCard()" style="flex: 2;">Karte Ziehen</button>
+                <button class="btn secondary" onclick="showWheel()" style="flex: 1;">🎯 Rad</button>
+            </div>
+            
+            <div style="text-align: center; color: rgba(255,255,255,0.4); font-size: 0.8em; margin-bottom: 20px;">
+                Spieler: <span id="currentPlayerName">Spieler 1</span>
+            </div>
+        </div>
     </div>
-    <p style="color: var(--gold-dark); font-size: 0.9rem; margin-top: 20px;">Richtig = +1 ðŸ‘• | Falsch = Game Over</p>
-  </div>
 
-  <!-- Dice Screen -->
-  <div id="diceScreen" class="screen">
-    <h2>ðŸŽ² Schicksalswurf</h2>
-    <div class="dice-container">
-      <div class="dice" id="dice1">â“<div class="dice-label">Richtung</div></div>
-      <div class="dice" id="dice2">â“<div class="dice-label">Aktion</div></div>
+    <!-- Wheel Overlay -->
+    <div class="wheel-section" id="wheelSection">
+        <div class="wheel-container">
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-center">JW</div>
+            </div>
+        </div>
+        <button class="btn" onclick="spinWheel()" style="margin-top: 30px; width: 100%;">Drehen</button>
+        <button class="btn secondary" onclick="hideWheel()" style="margin-top: 10px; width: 100%;">Schließen</button>
     </div>
-    <div id="diceResult" style="font-size: 1.2rem; color: var(--gold); margin: 20px 0; min-height: 60px;"></div>
-    <button class="btn" id="rollBtn" onclick="game.executeRoll()">WÃ¼rfeln</button>
-    <button class="btn secondary" onclick="game.backToAllIn()" style="margin-top: 10px;">ZurÃ¼ck</button>
-  </div>
 
-  <!-- Game Over Screen -->
-  <div id="gameOverScreen" class="screen">
-    <h2>Run Beendet</h2>
-    <div class="stats">
-      <div class="stat-box">
-        <div class="stat-value" id="finalScore">0</div>
-        <div class="stat-label">Score</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value" id="finalClothes">0</div>
-        <div class="stat-label">Ãœbrige Kleidung</div>
-      </div>
-    </div>
-    <p id="highScoreLabel" style="color: var(--premium); display: none; font-family: Cinzel;">ðŸ† Neuer High Score!</p>
-    <button class="btn" onclick="game.start()">Nochmal</button>
-    <button class="btn secondary" onclick="game.showMenu()">MenÃ¼</button>
-  </div>
-
-  <!-- Premium Screen -->
-  <div id="premiumScreen" class="screen">
-    <div class="premium-container">
-      <div class="premium-title">ðŸ‘‘ PREMIUM</div>
-      <p>Schalte alle Features frei</p>
-      
-      <div class="premium-features">
-        <div class="premium-feature"><span>ðŸ”¥</span> <span>XXX-Hot Mode</span></div>
-        <div class="premium-feature"><span>ðŸŽ¨</span> <span>Exklusive Skins</span></div>
-        <div class="premium-feature"><span>ðŸ¤–</span> <span>Alle Upgrades verfÃ¼gbar</span></div>
-        <div class="premium-feature"><span>ðŸ’°</span> <span>Starte mit +100 Credits</span></div>
-      </div>
-      
-      <input type="text" class="premium-key-input" id="premiumKey" placeholder="PREMIUM-KEY">
-      <button class="btn" onclick="game.activatePremium()" style="width: 100%; margin-bottom: 10px;">Aktivieren</button>
-      <button class="btn secondary" onclick="game.showMenu()">ZurÃ¼ck</button>
-    </div>
-  </div>
-
-  <script>
-    /* 
-       FUNKENFLUG SwipeMatch Roguelike
-       Â© 2026 Hans-Swathi Srikandaraja
-       
-       Fusion aus:
-       - SwipeMatch Arcade Mechanics
-       - FUNKENFLUG Clothing System
-       - Black Jack Casino
-       - Quiz & Dice Events
-    */
-
-    const CONSTANTS = {
-      LANES: 3,
-      MAX_CLOTHING: 5,
-      COLORS: {
-        player: '#4fd1c5',
-        enemy: '#DC2626',
-        special: '#ffa502'
-      }
-    };
-
-    const QUIZ_QUESTIONS = [
-      {q: "Hauptstadt von Deutschland?", a: ["Berlin", "MÃ¼nchen", "Hamburg"], c: 0},
-      {q: "Wie viele Herzen hat ein Oktopus?", a: ["1", "2", "3"], c: 2},
-      {q: "GrÃ¶ÃŸter Ozean?", a: ["Atlantik", "Pazifik", "Indisch"], c: 1},
-      {q: "Wer malte die Mona Lisa?", a: ["Van Gogh", "Da Vinci", "Picasso"], c: 1},
-      {q: "Kleinste Primzahl?", a: ["0", "1", "2"], c: 2}
-    ];
-
-    const DICE_ACTIONS = [
-      "Schild +1", "Speed Boost", "Zeitlupe", "Extra Score", "Nichts", "Challenge"
-    ];
-
-    class BlackJack {
-      constructor() {
-        this.deck = [];
-        this.player = [];
-        this.dealer = [];
-        this.state = 'betting';
-      }
-      
-      createDeck() {
-        const suits = ['â™ ï¸', 'â™¥ï¸', 'â™£ï¸', 'â™¦ï¸'];
-        const values = ['2','3','4','5','6','7','8','9','10','B','D','K','A'];
-        this.deck = [];
-        for (let s of suits) {
-          for (let v of values) {
-            let val = parseInt(v) || (v === 'A' ? 11 : 10);
-            this.deck.push({suit: s, value: v, num: val, red: s === 'â™¥ï¸' || s === 'â™¦ï¸'});
-          }
-        }
-        this.deck.sort(() => Math.random() - 0.5);
-      }
-      
-      deal() {
-        this.createDeck();
-        this.player = [this.deck.pop(), this.deck.pop()];
-        this.dealer = [this.deck.pop(), this.deck.pop()];
-        this.state = 'playing';
-        return this.calculate();
-      }
-      
-      calculate() {
-        const sum = (hand) => {
-          let s = hand.reduce((a,c) => a + c.num, 0);
-          let aces = hand.filter(c => c.value === 'A').length;
-          while (s > 21 && aces > 0) { s -= 10; aces--; }
-          return s;
+    <script>
+        // Game State (B.F. Skinner's Reiz-Belohnung System)
+        const State = {
+            progress: {
+                discipline: 1, // 1-4
+                unlocked: [true, false, false, false],
+                mastered: [false, false, false, false]
+            },
+            arcade: {
+                active: false,
+                clothes: 5,
+                score: 0,
+                playerLane: 1,
+                enemies: []
+            },
+            quiz: {
+                current: 0,
+                correct: 0
+            },
+            jw: {
+                mode: 'gift',
+                intensity: 1,
+                currentPlayer: 0,
+                players: ['Spieler 1', 'Spieler 2', 'Spieler 3']
+            },
+            fullAccess: false
         };
-        return { player: sum(this.player), dealer: sum(this.dealer) };
-      }
-      
-      hit() {
-        this.player.push(this.deck.pop());
-        const scores = this.calculate();
-        if (scores.player > 21) return 'bust';
-        return 'continue';
-      }
-      
-      dealerPlay() {
-        let scores = this.calculate();
-        while (scores.dealer < 17) {
-          this.dealer.push(this.deck.pop());
-          scores = this.calculate();
-        }
-        this.state = 'ended';
-        if (scores.dealer > 21) return 'win';
-        if (scores.dealer > scores.player) return 'lose';
-        if (scores.dealer < scores.player) return 'win';
-        return 'push';
-      }
-    }
 
-    class Game {
-      constructor() {
-        this.state = {
-          screen: 'menu',
-          score: 0,
-          streak: 0,
-          level: 1,
-          credits: 0,
-          clothing: 5,
-          maxClothing: 5,
-          playerLane: 1,
-          isRunning: false,
-          isPaused: false,
-          enemies: [],
-          particles: [],
-          upgrades: { speed: 0, multi: 0, shield: 0 },
-          stats: { best: 0, runs: 0 },
-          premium: false,
-          bj: null
-        };
-        
-        this.canvas = document.getElementById('gameCanvas');
-        this.ctx = this.canvas.getContext('2d');
-        this.dpr = window.devicePixelRatio || 1;
-        this.setupCanvas();
-        this.setupInputs();
-        this.loadProgress();
-        this.loop(0);
-      }
-
-      setupCanvas() {
-        const resize = () => {
-          const rect = this.canvas.getBoundingClientRect();
-          this.canvas.width = rect.width * this.dpr;
-          this.canvas.height = rect.height * this.dpr;
-          this.ctx.scale(this.dpr, this.dpr);
-          this.width = rect.width;
-          this.height = rect.height;
-          this.laneWidth = this.width / CONSTANTS.LANES;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-      }
-
-      setupInputs() {
-        let startX = 0;
-        const handleStart = (e) => {
-          startX = (e.touches ? e.touches[0] : e).clientX;
-        };
-        const handleEnd = (e) => {
-          if (!this.state.isRunning || this.state.isPaused) return;
-          const endX = (e.changedTouches ? e.changedTouches[0] : e).clientX;
-          const dx = endX - startX;
-          if (Math.abs(dx) > 30) {
-            this.moveLane(dx > 0 ? 1 : -1);
-          }
-        };
-        
-        this.canvas.addEventListener('touchstart', handleStart, {passive: true});
-        this.canvas.addEventListener('touchend', handleEnd, {passive: false});
-        this.canvas.addEventListener('mousedown', handleStart);
-        this.canvas.addEventListener('mouseup', handleEnd);
-        
-        document.addEventListener('keydown', (e) => {
-          if (!this.state.isRunning) return;
-          if (e.key === 'ArrowLeft') this.moveLane(-1);
-          if (e.key === 'ArrowRight') this.moveLane(1);
-        });
-      }
-
-      moveLane(dir) {
-        const newLane = Math.max(0, Math.min(2, this.state.playerLane + dir));
-        if (newLane !== this.state.playerLane) {
-          this.state.playerLane = newLane;
-          this.createParticles(this.getPlayerX(), this.height - 100, 5, CONSTANTS.COLORS.player);
-          if (navigator.vibrate) navigator.vibrate(20);
-        }
-      }
-
-      getPlayerX() {
-        return (this.state.playerLane * this.laneWidth) + (this.laneWidth / 2);
-      }
-
-      start() {
-        this.state = {
-          ...this.state,
-          score: 0,
-          streak: 0,
-          level: 1,
-          clothing: 5,
-          playerLane: 1,
-          isRunning: true,
-          isPaused: false,
-          enemies: [],
-          particles: [],
-          screen: 'game'
-        };
-        this.state.stats.runs++;
-        this.updateUI();
-        this.showScreen('game');
-        document.getElementById('allinBadge').classList.remove('active');
-      }
-
-      checkCollision() {
-        const px = this.getPlayerX();
-        const py = this.height - 100;
-        
-        for (let i = this.state.enemies.length - 1; i >= 0; i--) {
-          const e = this.state.enemies[i];
-          const dx = px - e.x;
-          const dy = py - e.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          
-          if (dist < 35) {
-            // Treffer!
-            if (this.state.upgrades.shield > 0) {
-              this.state.upgrades.shield--;
-              this.state.enemies.splice(i, 1);
-              this.createParticles(e.x, e.y, 10, CONSTANTS.COLORS.enemy);
-              this.showToast("ðŸ›¡ï¸ Schild verbraucht!");
-            } else {
-              this.loseClothing();
-              this.state.enemies.splice(i, 1);
-            }
-            return;
-          }
-        }
-      }
-
-      loseClothing() {
-        this.state.clothing--;
-        this.updateUI();
-        
-        if (this.state.clothing <= 0) {
-          this.gameOver();
-        } else if (this.state.clothing === 1) {
-          this.triggerAllIn();
-        } else {
-          this.showToast(`-1 Kleidung! Noch ${this.state.clothing}`);
-          // Kurze Unverwundbarkeit
-          this.state.isPaused = true;
-          setTimeout(() => {
-            if (this.state.clothing > 0) this.state.isPaused = false;
-          }, 1000);
-        }
-      }
-
-      triggerAllIn() {
-        this.state.isPaused = true;
-        document.getElementById('allinBadge').classList.add('active');
-        setTimeout(() => {
-          this.showScreen('allinScreen');
-        }, 500);
-      }
-
-      // Black Jack Integration
-      startBlackJack() {
-        this.state.bj = new BlackJack();
-        this.state.bj.deal();
-        this.showScreen('blackjackScreen');
-        this.renderBJ();
-      }
-
-      renderBJ() {
-        const bj = this.state.bj;
-        const scores = bj.calculate();
-        
-        const renderCard = (c) => `<div class="bj-card ${c.red ? 'red' : 'black'}"><div class="bj-card-value">${c.value}</div><div class="bj-card-suit">${c.suit}</div></div>`;
-        
-        document.getElementById('playerCards').innerHTML = bj.player.map(renderCard).join('');
-        document.getElementById('dealerCards').innerHTML = bj.dealer.map((c,i) => 
-          i === 1 && bj.state !== 'ended' ? 
-          '<div class="bj-card" style="background:linear-gradient(135deg,#b91c1c,#7f1d1d);color:white;display:flex;align-items:center;justify-content:center;font-size:2rem;">?</div>' : 
-          renderCard(c)
-        ).join('');
-        
-        document.getElementById('playerScore').textContent = scores.player;
-        document.getElementById('dealerScore').textContent = bj.state === 'ended' ? scores.dealer : '?';
-        document.getElementById('bjControls').style.display = bj.state === 'ended' ? 'none' : 'flex';
-        document.getElementById('bjContinueBtn').style.display = bj.state === 'ended' ? 'block' : 'none';
-      }
-
-      bjHit() {
-        const res = this.state.bj.hit();
-        this.renderBJ();
-        if (res === 'bust') this.endBJ('lose');
-      }
-
-      bjStand() {
-        const res = this.state.bj.dealerPlay();
-        this.endBJ(res);
-      }
-
-      bjDouble() {
-        this.state.bj.player.push(this.state.bj.deck.pop());
-        this.renderBJ();
-        setTimeout(() => {
-          const res = this.state.bj.dealerPlay();
-          this.endBJ(res);
-        }, 500);
-      }
-
-      endBJ(result) {
-        this.renderBJ();
-        const msg = document.getElementById('bjResult');
-        msg.style.display = 'block';
-        
-        if (result === 'win') {
-          msg.textContent = 'âœ… Gewonnen! +1 Kleidung';
-          msg.style.color = '#22c55e';
-          this.state.clothing = Math.min(this.state.maxClothing, this.state.clothing + 1);
-        } else if (result === 'push') {
-          msg.textContent = 'ðŸ¤ Unentschieden';
-          msg.style.color = '#ffa502';
-        } else {
-          msg.textContent = 'âŒ Verloren!';
-          msg.style.color = '#DC2626';
-        }
-        
-        this.updateUI();
-      }
-
-      finishBlackJack() {
-        document.getElementById('bjResult').style.display = 'none';
-        if (this.state.clothing <= 0) {
-          this.gameOver();
-        } else {
-          this.backToGame();
-        }
-      }
-
-      // Quiz Integration
-      startQuiz() {
-        const q = QUIZ_QUESTIONS[Math.floor(Math.random() * QUIZ_QUESTIONS.length)];
-        document.getElementById('quizQuestion').textContent = q.q;
-        const container = document.getElementById('quizAnswers');
-        container.innerHTML = '';
-        
-        q.a.forEach((ans, idx) => {
-          const btn = document.createElement('div');
-          btn.className = 'quiz-answer';
-          btn.textContent = ans;
-          btn.onclick = () => {
-            if (idx === q.c) {
-              btn.classList.add('correct');
-              this.state.clothing = Math.min(this.state.maxClothing, this.state.clothing + 1);
-              this.showToast("Richtig! +1 Kleidung");
-              setTimeout(() => this.backToGame(), 1000);
-            } else {
-              btn.classList.add('wrong');
-              setTimeout(() => this.gameOver(), 1000);
-            }
-            this.updateUI();
-          };
-          container.appendChild(btn);
-        });
-        
-        this.showScreen('quizScreen');
-      }
-
-      // Dice Integration
-      rollDice() {
-        this.showScreen('diceScreen');
-        document.getElementById('dice1').textContent = 'â“';
-        document.getElementById('dice2').textContent = 'â“';
-        document.getElementById('diceResult').textContent = '';
-        document.getElementById('rollBtn').style.display = 'block';
-      }
-
-      executeRoll() {
-        document.getElementById('rollBtn').style.display = 'none';
-        const d1 = Math.floor(Math.random() * 3) - 1; // -1, 0, 1
-        const d2 = Math.floor(Math.random() * DICE_ACTIONS.length);
-        
-        setTimeout(() => {
-          document.getElementById('dice1').innerHTML = (d1 > 0 ? 'â†’' : d1 < 0 ? 'â†' : 'â€¢') + '<div class="dice-label">Richtung</div>';
-          document.getElementById('dice2').innerHTML = 'ðŸŽ²<div class="dice-label">' + DICE_ACTIONS[d2] + '</div>';
-          
-          // Auswirkungen
-          if (d1 !== 0) this.state.playerLane = Math.max(0, Math.min(2, this.state.playerLane + d1));
-          
-          const result = document.getElementById('diceResult');
-          switch(d2) {
-            case 0: this.state.upgrades.shield++; result.textContent = 'ðŸ›¡ï¸ Schild erhalten!'; break;
-            case 1: this.state.upgrades.speed++; result.textContent = 'âš¡ Speed Boost!'; break;
-            case 2: result.textContent = 'â±ï¸ Zeitlupe aktiv!'; break;
-            case 3: this.state.score += 100; result.textContent = 'ðŸ’° +100 Score!'; break;
-            case 4: result.textContent = 'ðŸ˜ Nichts passiert...'; break;
-            case 5: this.state.clothing--; result.textContent = 'ðŸ˜± Challenge failed! -1 Kleidung'; break;
-          }
-          
-          this.updateUI();
-          setTimeout(() => {
-            if (this.state.clothing <= 0) this.gameOver();
-            else this.backToGame();
-          }, 2000);
-        }, 1000);
-      }
-
-      surrender() {
-        this.gameOver();
-      }
-
-      backToAllIn() {
-        this.showScreen('allinScreen');
-      }
-
-      backToGame() {
-        this.state.isPaused = false;
-        document.getElementById('allinBadge').classList.remove('active');
-        this.showScreen('game');
-        this.updateUI();
-      }
-
-      gameOver() {
-        this.state.isRunning = false;
-        this.state.screen = 'gameover';
-        
-        if (this.state.score > this.state.stats.best) {
-          this.state.stats.best = this.state.score;
-          document.getElementById('highScoreLabel').style.display = 'block';
-        }
-        
-        // Credits: 10 Score = 1 Credit
-        this.state.credits += Math.floor(this.state.score / 10);
-        this.saveProgress();
-        
-        document.getElementById('finalScore').textContent = this.state.score;
-        document.getElementById('finalClothes').textContent = this.state.clothing;
-        this.showScreen('gameOverScreen');
-      }
-
-      update(dt) {
-        if (!this.state.isRunning || this.state.isPaused) return;
-        
-        // Spawn
-        if (Math.random() < 0.02 + (this.state.level * 0.001)) {
-          const lane = Math.floor(Math.random() * 3);
-          this.state.enemies.push({
-            x: (lane * this.laneWidth) + (this.laneWidth / 2),
-            y: -50,
-            lane: lane,
-            speed: 2 + (this.state.level * 0.5) + (this.state.upgrades.speed * 0.5),
-            type: Math.random() > 0.9 ? 'special' : 'normal'
-          });
-        }
-        
-        // Update enemies
-        this.state.enemies.forEach((e, i) => {
-          e.y += e.speed;
-          if (e.y > this.height) {
-            this.state.enemies.splice(i, 1);
-            this.state.score += 10 * (1 + this.state.upgrades.multi);
-            this.state.streak++;
-            if (this.state.streak % 10 === 0) this.state.level++;
-            this.updateUI();
-          }
-        });
-        
-        // Update particles
-        this.state.particles = this.state.particles.filter(p => {
-          p.life -= 0.02;
-          p.x += p.vx;
-          p.y += p.vy;
-          return p.life > 0;
-        });
-        
-        this.checkCollision();
-        
-        // Auto-save
-        if (Math.floor(performance.now() / 5000) > Math.floor((performance.now() - dt*16) / 5000)) {
-          localStorage.setItem('swipematch_run', JSON.stringify(this.state));
-        }
-      }
-
-      createParticles(x, y, count, color) {
-        for (let i = 0; i < count; i++) {
-          const angle = (Math.PI * 2 * i) / count;
-          this.state.particles.push({
-            x, y,
-            vx: Math.cos(angle) * 3,
-            vy: Math.sin(angle) * 3,
-            life: 1,
-            color
-          });
-        }
-      }
-
-      draw() {
-        // Background
-        this.ctx.fillStyle = CONSTANTS.COLORS.bg;
-        this.ctx.fillRect(0, 0, this.width, this.height);
-        
-        // Lanes
-        for (let i = 0; i < 3; i++) {
-          const x = i * this.laneWidth;
-          this.ctx.fillStyle = i === this.state.playerLane ? '#252a3a' : '#1a1d29';
-          this.ctx.fillRect(x + 2, 0, this.laneWidth - 4, this.height);
-        }
-        
-        // Player
-        const px = this.getPlayerX();
-        const py = this.height - 100;
-        this.ctx.shadowBlur = 20;
-        this.ctx.shadowColor = CONSTANTS.COLORS.player;
-        this.ctx.fillStyle = CONSTANTS.COLORS.player;
-        this.ctx.beginPath();
-        this.ctx.arc(px, py, 20, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.shadowBlur = 0;
-        
-        // Enemies
-        this.state.enemies.forEach(e => {
-          this.ctx.fillStyle = e.type === 'special' ? CONSTANTS.COLORS.special : CONSTANTS.COLORS.enemy;
-          this.ctx.shadowBlur = 10;
-          this.ctx.shadowColor = this.ctx.fillStyle;
-          this.ctx.beginPath();
-          this.ctx.arc(e.x, e.y, 15, 0, Math.PI * 2);
-          this.ctx.fill();
-          this.ctx.shadowBlur = 0;
-        });
-        
-        // Particles
-        this.state.particles.forEach(p => {
-          this.ctx.globalAlpha = p.life;
-          this.ctx.fillStyle = p.color;
-          this.ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
-        });
-        this.ctx.globalAlpha = 1;
-        
-        // Pause overlay
-        if (this.state.isPaused) {
-          this.ctx.fillStyle = 'rgba(0,0,0,0.7)';
-          this.ctx.fillRect(0, 0, this.width, this.height);
-          this.ctx.fillStyle = '#fff';
-          this.ctx.font = 'bold 48px Cinzel';
-          this.ctx.textAlign = 'center';
-          this.ctx.fillText('PAUSED', this.width / 2, this.height / 2);
-        }
-      }
-
-      loop(timestamp) {
-        const dt = timestamp - this.lastTime;
-        this.lastTime = timestamp;
-        this.update(dt / 16);
-        this.draw();
-        requestAnimationFrame((t) => this.loop(t));
-      }
-
-      updateUI() {
-        document.getElementById('scoreDisplay').textContent = Math.floor(this.state.score);
-        document.getElementById('streakDisplay').textContent = this.state.streak;
-        document.getElementById('levelDisplay').textContent = this.state.level;
-        document.getElementById('creditsDisplay').textContent = this.state.credits;
-        document.getElementById('clothesText').textContent = `${this.state.clothing}/${this.state.maxClothing}`;
-        
-        // Visual warning bei wenig Kleidung
-        const clothesDisplay = document.getElementById('clothesDisplay');
-        if (this.state.clothing === 1) {
-          clothesDisplay.style.borderColor = '#DC2626';
-          clothesDisplay.style.animation = 'pulse 1s infinite';
-        } else {
-          clothesDisplay.style.borderColor = 'var(--gold-dark)';
-          clothesDisplay.style.animation = 'none';
-        }
-      }
-
-      showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        if (id === 'game') {
-          this.canvas.style.display = 'block';
-        } else {
-          document.getElementById(id).classList.add('active');
-          this.canvas.style.display = 'none';
-        }
-      }
-
-      showMenu() {
-        document.getElementById('menuBest').textContent = this.state.stats.best;
-        document.getElementById('menuRuns').textContent = this.state.stats.runs;
-        document.getElementById('continueBtn').style.display = 
-          localStorage.getItem('swipematch_run') ? 'flex' : 'none';
-        this.showScreen('menuScreen');
-      }
-
-      showUpgrades() {
-        document.getElementById('upgradeCredits').textContent = this.state.credits;
-        const grid = document.getElementById('upgradeGrid');
-        grid.innerHTML = '';
-        
-        const ups = [
-          {id: 'speed', name: 'Nitro Boost', desc: '10% schneller', cost: 50},
-          {id: 'multi', name: 'Score Multi', desc: '20% mehr Punkte', cost: 100},
-          {id: 'shield', name: 'Schild', desc: '+1 Schild pro Run', cost: 200}
+        // Content Database
+        const Questions = [
+            {q: "Wie viele Herzen hat ein Oktopus?", a: ["1", "2", "3"], c: 2},
+            {q: "Chemisches Symbol für Gold?", a: ["Au", "Ag", "Fe"], c: 0},
+            {q: "Wer malte die Mona Lisa?", a: ["Van Gogh", "Da Vinci", "Picasso"], c: 1}
         ];
-        
-        ups.forEach(u => {
-          const card = document.createElement('div');
-          card.className = 'upgrade-card';
-          card.innerHTML = `
-            <h3>${u.name} (Lv.${this.state.upgrades[u.id]})</h3>
-            <p>${u.desc}</p>
-            <span class="upgrade-cost">${u.cost} Credits</span>
-          `;
-          if (this.state.credits >= u.cost) {
-            card.onclick = () => {
-              this.state.credits -= u.cost;
-              this.state.upgrades[u.id]++;
-              this.saveProgress();
-              this.showUpgrades();
+
+        const JwCards = {
+            gift: [
+                {t: "Binde dir das rote Band um die Augen. Die anderen dürfen dich jetzt 3 Minuten lang 'dekorieren'.", i: 1},
+                {t: "Du bist das Geburtstagsgeschenk. Stelle dich in die Mitte und werde langsam 'ausgepackt' – mit Worten.", i: 1},
+                {t: "Die Schleife sitzt. Die anderen diskutieren laut, was sie mit ihrem 'Spielzeug' anstellen könnten.", i: 2},
+                {t: "Du wirst mit Band an den Stuhl gefesselt. Die anderen genießen den Anblick 2 Minuten schweigend.", i: 3},
+                {t: "Beschreibe laut, wie es sich anfühlt, 'Geschenk' zu sein – reduziert auf den Genuss der anderen.", i: 2}
+            ],
+            inspection: [
+                {t: "Stelle dich in die Mitte. Die anderen inspizieren dich ausführlich – aber ohne Berührung.", i: 1},
+                {t: "Augenbinden-Inspektion: Du weißt nie, wo hingeschaut wird. Die anderen beschreiben laut ihre Sicht.", i: 2},
+                {t: "5 Minuten lang darfst du dich nicht bewegen, während die andere Person tut, was ihr gefällt.", i: 3},
+                {t: "Zeige der anderen Person, wie du dich selbst berührst – unter ihrer Anleitung.", i: 3}
+            ],
+            trio: [
+                {t: "Zwei gegen Eins: Die anderen bestimmen abwechselnd, was du als Nächstes tust.", i: 2},
+                {t: "Die Nichte: Eine Person ist 'unerfahren aber neugierig', die andere führt sie an. Du bist das Lehrstück.", i: 2},
+                {t: "Du wirst von hinten gehalten, während du der dritten Person zuschauen musst.", i: 3},
+                {t: "Wettstreit: Wer bringt dich schneller zum Stöhnen – nur mit Worten?", i: 3}
+            ],
+            control: [
+                {t: "Tease & Denial: Du wirst fast zum Höhepunkt gebracht – dann muss 3 Minuten Pause eingelegt werden.", i: 3},
+                {t: "Die Melkmaschine: Rhythmisches, mechanisches Ritual. Keine Emotion, nur Funktion.", i: 3},
+                {t: "Du darfst dich selbst berühren, aber nur in dem Tempo, das die andere Person vorgibt.", i: 2},
+                {t: "10 Minuten lang intensive Stimulation, aber du darfst nicht kommen.", i: 3}
+            ]
+        };
+
+        // Initialization
+        function verifyAccess() {
+            const code = document.getElementById('accessCode').value;
+            if (code === '26101908') {
+                State.fullAccess = true;
+                State.progress.unlocked = [true, true, true, true];
+                document.getElementById('accessCode').classList.add('unlocked');
+                setTimeout(() => enterGame(), 500);
+            } else {
+                alert('Ungültiger Code. Demo-Modus startet.');
+                enterGame();
+            }
+        }
+
+        function enterStandard() {
+            enterGame();
+        }
+
+        function enterGame() {
+            document.getElementById('ageGate').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('ageGate').style.display = 'none';
+                document.getElementById('mainHeader').style.display = 'flex';
+                document.getElementById('hubScreen').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('hubScreen').classList.add('active');
+                }, 50);
+                updateHub();
+            }, 500);
+            
+            if (State.fullAccess) {
+                document.getElementById('logoText').classList.add('jw-active');
+                document.getElementById('logoText').innerHTML = 'FUNKENFLUG <span style="font-size:0.5em">JW</span>';
+            }
+        }
+
+        function updateHub() {
+            const p = State.progress;
+            const percent = ((p.discipline - 1) / 3) * 100;
+            document.getElementById('chainLine').style.setProperty('--progress-percent', percent + '%');
+            document.getElementById('mainProgress').style.width = percent + '%';
+            document.getElementById('currentDiscipline').textContent = ['I', 'II', 'III', 'IV'][p.discipline - 1];
+            
+            // Update nodes
+            for (let i = 1; i <= 4; i++) {
+                const node = document.getElementById('node' + i);
+                if (p.unlocked[i-1]) {
+                    node.classList.remove('locked');
+                    node.classList.add('unlocked');
+                    if (i === p.discipline) node.classList.add('active');
+                    else node.classList.remove('active');
+                }
+                if (p.mastered[i-1]) node.classList.add('mastered');
+            }
+            
+            // Update clothes indicator
+            const ci = document.getElementById('clothesIndicator');
+            if (State.arcade.clothes === 1) ci.classList.add('danger');
+            else ci.classList.remove('danger');
+            document.getElementById('clothesCount').textContent = State.arcade.clothes;
+        }
+
+        function enterDiscipline(n) {
+            if (!State.progress.unlocked[n-1]) return;
+            State.progress.discipline = n;
+            
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
+            document.getElementById('gameCanvas').style.display = 'none';
+            
+            switch(n) {
+                case 1: startArcade(); break;
+                case 2: startQuiz(); break;
+                case 3: startCasino(); break;
+                case 4: startJw(); break;
+            }
+            updateHub();
+        }
+
+        // Disziplin I: Arcade (Reaktionstraining)
+        function startArcade() {
+            document.getElementById('gameCanvas').style.display = 'block';
+            State.arcade.active = true;
+            State.arcade.clothes = 5;
+            State.arcade.enemies = [];
+            State.arcade.playerLane = 1;
+            updateHub();
+            initCanvas();
+        }
+
+        function initCanvas() {
+            const c = document.getElementById('gameCanvas');
+            const ctx = c.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            function resize() {
+                c.width = window.innerWidth * dpr;
+                c.height = (window.innerHeight - 60) * dpr;
+                ctx.scale(dpr, dpr);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            
+            let lastTime = 0;
+            function loop(timestamp) {
+                if (!State.arcade.active) return;
+                const dt = timestamp - lastTime;
+                lastTime = timestamp;
+                
+                const w = c.width / dpr;
+                const h = c.height / dpr;
+                const laneW = w / 3;
+                
+                // Clear
+                ctx.fillStyle = '#0a0a0a';
+                ctx.fillRect(0, 0, w, h);
+                
+                // Lanes
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillStyle = i === State.arcade.playerLane ? '#2d0a0a' : '#1a0a0a';
+                    ctx.fillRect(i * laneW, 0, laneW - 4, h);
+                }
+                
+                // Player
+                const px = (State.arcade.playerLane * laneW) + (laneW / 2);
+                const py = h - 100;
+                ctx.fillStyle = '#d4af37';
+                ctx.beginPath();
+                ctx.arc(px, py, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Enemies
+                if (Math.random() < 0.02) {
+                    State.arcade.enemies.push({
+                        x: Math.floor(Math.random() * 3),
+                        y: -50,
+                        speed: 3 + (State.arcade.score / 500)
+                    });
+                }
+                
+                State.arcade.enemies.forEach((e, i) => {
+                    e.y += e.speed;
+                    const ex = (e.x * laneW) + (laneW / 2);
+                    
+                    ctx.fillStyle = '#8b0000';
+                    ctx.beginPath();
+                    ctx.arc(ex, e.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Collision
+                    if (e.x === State.arcade.playerLane && Math.abs(e.y - py) < 35) {
+                        State.arcade.enemies.splice(i, 1);
+                        loseClothing();
+                    }
+                    
+                    if (e.y > h) {
+                        State.arcade.enemies.splice(i, 1);
+                        State.arcade.score += 10;
+                    }
+                });
+                
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
+            
+            // Controls
+            let startX = 0;
+            c.addEventListener('touchstart', e => startX = e.touches[0].clientX, {passive: true});
+            c.addEventListener('touchend', e => {
+                const endX = e.changedTouches[0].clientX;
+                const dx = endX - startX;
+                if (Math.abs(dx) > 30) {
+                    State.arcade.playerLane += dx > 0 ? 1 : -1;
+                    State.arcade.playerLane = Math.max(0, Math.min(2, State.arcade.playerLane));
+                }
+            }, {passive: false});
+            
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowLeft') State.arcade.playerLane = Math.max(0, State.arcade.playerLane - 1);
+                if (e.key === 'ArrowRight') State.arcade.playerLane = Math.min(2, State.arcade.playerLane + 1);
+            });
+        }
+
+        function loseClothing() {
+            State.arcade.clothes--;
+            updateHub();
+            if (State.arcade.clothes <= 0) {
+                State.arcade.active = false;
+                alert('Game Over. Zurück zu Disziplin I.');
+                enterDiscipline(1);
+            } else if (State.arcade.clothes === 1) {
+                // All In trigger
+                if (confirm('⚠️ ALL IN! Nur noch 1 Leben. Black Jack spielen für +1 Leben?')) {
+                    State.arcade.active = false;
+                    enterDiscipline(3);
+                }
+            }
+        }
+
+        // Disziplin II: Quiz (Fixe Ratio Belohnung)
+        function startQuiz() {
+            document.getElementById('quizScreen').style.display = 'block';
+            setTimeout(() => document.getElementById('quizScreen').classList.add('active'), 50);
+            State.quiz.current = 0;
+            State.quiz.correct = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (State.quiz.current >= 3) {
+                if (State.quiz.correct >= 3) {
+                    State.progress.unlocked[2] = true;
+                    State.progress.mastered[1] = true;
+                    alert('✅ Disziplin II gemeistert! Casino freigeschaltet.');
+                    enterDiscipline(1);
+                } else {
+                    alert('❌ Nicht bestanden. Zurück zur Prüfung.');
+                    enterDiscipline(1);
+                }
+                return;
+            }
+            
+            const q = Questions[State.quiz.current];
+            document.getElementById('qCurrent').textContent = State.quiz.current + 1;
+            document.getElementById('qText').textContent = q.q;
+            const container = document.getElementById('qAnswers');
+            container.innerHTML = '';
+            
+            q.a.forEach((ans, idx) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-answer';
+                div.textContent = ans;
+                div.onclick = function() {
+                    if (idx === q.c) {
+                        this.classList.add('correct');
+                        State.quiz.correct++;
+                    } else {
+                        this.classList.add('wrong');
+                    }
+                    setTimeout(() => {
+                        State.quiz.current++;
+                        loadQuestion();
+                    }, 1000);
+                };
+                container.appendChild(div);
+            });
+        }
+
+        // Disziplin III: Casino (Variable Ratio)
+        function startCasino() {
+            document.getElementById('casinoScreen').style.display = 'block';
+            setTimeout(() => document.getElementById('casinoScreen').classList.add('active'), 50);
+            document.getElementById('casinoMenu').style.display = 'block';
+            document.getElementById('bjGame').style.display = 'none';
+            document.getElementById('diceGame').style.display = 'none';
+        }
+
+        function backToCasino() {
+            document.getElementById('bjGame').style.display = 'none';
+            document.getElementById('diceGame').style.display = 'none';
+            document.getElementById('casinoMenu').style.display = 'block';
+        }
+
+        // Black Jack
+        let bjState = null;
+        function startBlackJack() {
+            document.getElementById('casinoMenu').style.display = 'none';
+            document.getElementById('bjGame').style.display = 'block';
+            bjState = {
+                deck: createDeck(),
+                player: [],
+                dealer: [],
+                done: false
             };
-          } else {
-            card.style.opacity = '0.5';
-          }
-          grid.appendChild(card);
-        });
-        
-        this.showScreen('upgradeScreen');
-      }
-
-      showCasino() {
-        this.showToast("ðŸƒ Casino nur im Spiel verfÃ¼gbar!");
-      }
-
-      showPremium() {
-        this.showScreen('premiumScreen');
-      }
-
-      activatePremium() {
-        const key = document.getElementById('premiumKey').value;
-        if (key === 'FUNKEN2026' || key === 'PREMIUM') {
-          this.state.premium = true;
-          localStorage.setItem('swipematch_premium', 'true');
-          document.getElementById('headerLogo').classList.add('premium');
-          document.getElementById('premiumBtn').classList.add('premium-active');
-          this.showToast("ðŸ‘‘ Premium aktiviert!");
-          setTimeout(() => this.showMenu(), 1000);
-        } else {
-          this.showToast("âŒ UngÃ¼ltiger Key");
+            bjState.player.push(bjState.deck.pop(), bjState.deck.pop());
+            bjState.dealer.push(bjState.deck.pop(), bjState.deck.pop());
+            renderBJ();
         }
-      }
 
-      showRules() {
-        this.showToast("ðŸ‘• 5 KleidungsstÃ¼cke | ðŸƒ All-In bei 1 | ðŸ§  Quiz fÃ¼r Rettung");
-      }
-
-      showToast(msg) {
-        // Einfacher Toast
-        const div = document.createElement('div');
-        div.style.cssText = 'position:fixed;top:120px;left:50%;transform:translateX(-50%);background:#1A1A1A;border:2px solid var(--gold);color:var(--gold);padding:12px 24px;border-radius:25px;z-index:5000;font-family:Cinzel;';
-        div.textContent = msg;
-        document.body.appendChild(div);
-        setTimeout(() => div.remove(), 2000);
-      }
-
-      loadRun() {
-        const saved = localStorage.getItem('swipematch_run');
-        if (saved) {
-          this.state = JSON.parse(saved);
-          this.state.isPaused = true;
-          this.updateUI();
-          this.showScreen('game');
+        function createDeck() {
+            const s = ['♠','♥','♣','♦'];
+            const v = ['2','3','4','5','6','7','8','9','10','B','D','K','A'];
+            let d = [];
+            for (let su of s) for (let va of v) {
+                let n = parseInt(va) || (va==='A'?11:10);
+                d.push({s: su, v: va, n: n});
+            }
+            return d.sort(()=>Math.random()-0.5);
         }
-      }
 
-      saveProgress() {
-        localStorage.setItem('swipematch_progress', JSON.stringify({
-          credits: this.state.credits,
-          upgrades: this.state.upgrades,
-          stats: this.state.stats,
-          premium: this.state.premium
-        }));
-      }
-
-      loadProgress() {
-        const saved = localStorage.getItem('swipematch_progress');
-        if (saved) {
-          const data = JSON.parse(saved);
-          this.state.credits = data.credits || 0;
-          this.state.upgrades = data.upgrades || {speed:0, multi:0, shield:0};
-          this.state.stats = data.stats || {best:0, runs:0};
-          this.state.premium = data.premium || false;
-          
-          if (this.state.premium) {
-            document.getElementById('headerLogo').classList.add('premium');
-            document.getElementById('premiumBtn').classList.add('premium-active');
-          }
+        function calc(h) {
+            let s = h.reduce((a,c)=>a+c.n,0);
+            let ac = h.filter(x=>x.v==='A').length;
+            while (s>21 && ac--) s-=10;
+            return s;
         }
-      }
-    }
 
-    const game = new Game();
-  </script>
+        function renderBJ() {
+            const pc = calc(bjState.player);
+            const dc = calc(bjState.dealer);
+            
+            const render = c => `<div class="playing-card ${c.s==='♥'||c.s==='♦'?'red':''}">${c.v}${c.s}</div>`;
+            document.getElementById('playerCards').innerHTML = bjState.player.map(render).join('');
+            document.getElementById('dealerCards').innerHTML = bjState.dealer.map((c,i) => 
+                i===1 && !bjState.done ? '<div class="playing-card" style="background:linear-gradient(135deg,#666,#333);color:white">?</div>' : render(c)
+            ).join('');
+            
+            if (bjState.done) {
+                let result = '';
+                if (pc > 21) result = 'Bust! Verloren.';
+                else if (dc > 21 || pc > dc) {
+                    result = 'Gewonnen! +1 Leben freigeschaltet.';
+                    State.arcade.clothes++;
+                    State.progress.unlocked[3] = true;
+                    State.progress.mastered[2] = true;
+                } else if (pc < dc) result = 'Verloren.';
+                else result = 'Push.';
+                document.getElementById('bjResult').textContent = result;
+            }
+        }
+
+        function bjHit() {
+            bjState.player.push(bjState.deck.pop());
+            if (calc(bjState.player) > 21) {
+                bjState.done = true;
+            }
+            renderBJ();
+        }
+
+        function bjStand() {
+            bjState.done = true;
+            let d = calc(bjState.dealer);
+            while (d < 17) {
+                bjState.dealer.push(bjState.deck.pop());
+                d = calc(bjState.dealer);
+            }
+            renderBJ();
+            if (calc(bjState.player) <= 21 && (d > 21 || calc(bjState.player) > d)) {
+                setTimeout(() => {
+                    alert('🎉 JW Edition freigeschaltet!');
+                    enterDiscipline(4);
+                }, 1000);
+            }
+        }
+
+        // Dice
+        function startDice() {
+            document.getElementById('casinoMenu').style.display = 'none';
+            document.getElementById('diceGame').style.display = 'block';
+            document.getElementById('dice1').textContent = '?';
+            document.getElementById('dice2').textContent = '?';
+            document.getElementById('diceResult').textContent = '';
+        }
+
+        function rollDice() {
+            const d1 = Math.floor(Math.random()*6)+1;
+            const d2 = Math.floor(Math.random()*6)+1;
+            document.getElementById('dice1').textContent = d1;
+            document.getElementById('dice2').textContent = d2;
+            const sum = d1 + d2;
+            let msg = '';
+            if (sum >= 10) {
+                msg = '🎉 Glück! JW Edition freigeschaltet!';
+                State.progress.unlocked[3] = true;
+                State.progress.mastered[2] = true;
+                setTimeout(() => enterDiscipline(4), 2000);
+            } else if (sum >= 7) {
+                msg = '😐 Weiter spielen...';
+            } else {
+                msg = '😞 Pech. Zurück zur Prüfung.';
+                setTimeout(() => enterDiscipline(1), 2000);
+            }
+            document.getElementById('diceResult').textContent = msg;
+        }
+
+        // Disziplin IV: Johanna Weber Edition
+        function startJw() {
+            document.getElementById('jwScreen').style.display = 'block';
+            setTimeout(() => document.getElementById('jwScreen').classList.add('active'), 50);
+            State.jw.currentPlayer = 0;
+            updateJwUI();
+        }
+
+        function updateJwUI() {
+            document.getElementById('currentPlayerName').textContent = State.jw.players[State.jw.currentPlayer];
+        }
+
+        function setJwMode(mode) {
+            State.jw.mode = mode;
+            document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('cardText').innerHTML = '<span class="card-placeholder">Bereit für ' + mode + '...</span>';
+            document.getElementById('cardText').classList.remove('revealed');
+        }
+
+        function setIntensity(lvl) {
+            State.jw.intensity = lvl;
+            document.querySelectorAll('.intensity-btn').forEach((b,i) => {
+                b.classList.toggle('active', i+1 === lvl);
+            });
+        }
+
+        function drawJwCard() {
+            const cards = JwCards[State.jw.mode].filter(c => c.i <= State.jw.intensity);
+            if (cards.length === 0) return;
+            const card = cards[Math.floor(Math.random() * cards.length)];
+            
+            document.getElementById('cardCategory').textContent = 
+                (State.jw.mode === 'gift' ? 'Geschenkband' : 
+                 State.jw.mode === 'inspection' ? 'Inspektion' :
+                 State.jw.mode === 'trio' ? 'Trio' : 'Kontrolle') + ' · Stufe ' + card.i;
+            
+            const textEl = document.getElementById('cardText');
+            textEl.textContent = card.t;
+            textEl.classList.remove('revealed');
+            setTimeout(() => textEl.classList.add('revealed'), 50);
+            
+            State.jw.currentPlayer = (State.jw.currentPlayer + 1) % State.jw.players.length;
+            updateJwUI();
+            
+            if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+        }
+
+        // Wheel Functions
+        function showWheel() {
+            document.getElementById('wheelSection').classList.add('active');
+        }
+
+        function hideWheel() {
+            document.getElementById('wheelSection').classList.remove('active');
+        }
+
+        function spinWheel() {
+            const wheel = document.getElementById('wheel');
+            const rot = 5 * 360 + Math.random() * 360;
+            wheel.style.transform = `rotate(${rot}deg)`;
+            if (navigator.vibrate) navigator.vibrate([20,20,20,20,20,20,20,20]);
+        }
+
+        function resetProgress() {
+            if (confirm('Wirklich zurücksetzen?')) {
+                State.progress.unlocked = [true, false, false, false];
+                State.progress.mastered = [false, false, false, false];
+                State.progress.discipline = 1;
+                State.arcade.clothes = 5;
+                updateHub();
+            }
+        }
+
+        // Service Worker für Offline
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(`
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+            `)).catch(()=>{});
+        }
+    </script>
 </body>
 </html>
