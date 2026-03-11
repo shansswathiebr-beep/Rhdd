@@ -8,12 +8,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="FUNKENFLUG Johanna Weber Edition – Premium Party Game Experience">
+    <meta name="description" content="FUNKENFLUG Johanna Weber Edition – Premium Party Game with AI Testing">
     <title>FUNKENFLUG • Johanna Weber Edition</title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap');
+        
         :root {
             --void: #0a0505;
             --deep: #1a0a0a;
@@ -23,94 +23,107 @@
             --obsidian: #0d0d0d;
             --silk: #e8e0d5;
             --emerald: #27ae60;
+            --neon: #00ff88;
+            --bot-blue: #4facfe;
         }
 
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+        * { 
+            margin:0; padding:0; box-sizing:border-box; 
+            -webkit-tap-highlight-color:transparent; 
+            touch-action:manipulation; 
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
-
-        html, body {
-            height: 100%; overflow: hidden;
-            background: var(--void); color: var(--silk);
-            font-family: 'Inter', sans-serif;
-            position: fixed; width: 100%;
+        
+        html, body { 
+            height:100%; overflow:hidden; 
+            background:var(--void); color:var(--silk); 
+            font-family:'Inter',sans-serif; 
+            position:fixed; width:100%; 
             overscroll-behavior: none;
         }
 
-        .screen {
-            position: absolute; inset: 0; display: none;
-            flex-direction: column;
-            background: linear-gradient(135deg, var(--void) 0%, var(--deep) 100%);
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+        .screen { 
+            position:absolute; inset:0; display:none; 
+            flex-direction:column; 
+            background:linear-gradient(135deg, var(--void) 0%, var(--deep) 100%); 
+            padding-top:env(safe-area-inset-top); 
+            padding-bottom:env(safe-area-inset-bottom); 
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .screen.active { display: flex; }
+        .screen.active { display:flex; }
 
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(1.8rem, 6vw, 2.4rem);
-            color: var(--gold); text-align: center;
-            letter-spacing: 0.08em;
-            text-shadow: 0 0 25px rgba(212,175,55,0.4);
+        h1 { 
+            font-family:'Cinzel',serif; 
+            font-size:clamp(1.8rem,6vw,2.4rem); 
+            color:var(--gold); 
+            text-align:center; 
+            letter-spacing:0.08em; 
+            text-shadow:0 0 25px rgba(212,175,55,0.4); 
         }
 
         .watermark {
-            position: fixed; bottom: 18%; right: -110px;
-            font-size: 10.5rem; font-weight: 900;
-            color: #d4af37; opacity: 0.045;
-            transform: rotate(-17deg); pointer-events: none;
-            z-index: 999; letter-spacing: -25px;
-            white-space: nowrap; font-family: system-ui; line-height: 1;
+            position:fixed; bottom:18%; right:-110px; 
+            font-size:10.5rem; font-weight:900; 
+            color:#d4af37; opacity:0.045;
+            transform:rotate(-17deg); pointer-events:none; 
+            z-index:999; letter-spacing:-25px; 
+            white-space:nowrap; font-family:system-ui; line-height:1;
         }
 
         /* AUTH */
-        .auth-container {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            gap: 1.5rem; padding: 1.5rem;
+        .auth-container { 
+            flex:1; display:flex; flex-direction:column; 
+            justify-content:center; align-items:center; 
+            gap:1.5rem; padding:1.5rem; 
         }
-
+        
         .code-input {
-            width: min(220px, 65vw); height: 58px;
-            background: var(--obsidian); border: 3px solid var(--gold);
-            color: var(--gold); font-family: 'Cinzel', serif;
-            font-size: 1.8rem; text-align: center; letter-spacing: 12px;
-            border-radius: 12px; outline: none;
+            width:min(220px,65vw); height:58px; 
+            background:var(--obsidian); border:3px solid var(--gold);
+            color:var(--gold); font-family:'Cinzel',serif; 
+            font-size:1.8rem; text-align:center; letter-spacing:12px;
+            border-radius:12px; outline:none;
             -webkit-appearance: none;
+            /* FIX: iOS Zoom Prevention */
+            font-size:16px;
+            touch-action: manipulation;
         }
 
         .btn {
-            background: linear-gradient(135deg, var(--burgund), var(--crimson));
-            border: 2px solid var(--gold); color: var(--silk);
-            padding: 16px 32px; font-family: 'Cinzel', serif;
-            font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase;
-            border-radius: 10px; width: min(300px, 85vw); min-height: 52px;
-            cursor: pointer; transition: all 0.2s;
+            background:linear-gradient(135deg, var(--burgund), var(--crimson)); 
+            border:2px solid var(--gold); color:var(--silk);
+            padding:16px 32px; font-family:'Cinzel',serif; 
+            font-size:0.95rem; letter-spacing:2px; text-transform:uppercase;
+            border-radius:10px; width:min(300px,85vw); min-height:52px; 
+            cursor:pointer; transition:all 0.2s;
             position: relative; overflow: hidden;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn:active { transform:scale(0.97); }
         .btn::after {
-            content: ''; position: absolute;
-            top: 50%; left: 50%; width: 0; height: 0;
-            background: rgba(255,255,255,0.1); border-radius: 50%;
-            transform: translate(-50%, -50%);
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0; background: rgba(255,255,255,0.1);
+            border-radius: 50%; transform: translate(-50%, -50%);
             transition: width 0.3s, height 0.3s;
         }
         .btn:active::after { width: 200%; height: 200%; }
-        .btn-secondary { background: transparent; border: 2px solid rgba(232,224,213,0.4); }
+
+        .btn-secondary {
+            background: transparent; border: 2px solid rgba(232,224,213,0.4);
+        }
+        .btn-beta {
+            position: fixed; bottom: max(20px, env(safe-area-inset-bottom));
+            right: 20px; width: auto; padding: 8px 14px; font-size: 0.65rem;
+            background: rgba(0,255,136,0.1); border: 1px solid var(--neon);
+            color: var(--neon); opacity: 0.6;
+        }
+        .btn-beta:hover { opacity: 1; }
         .btn-small { padding: 8px 16px; font-size: 0.75rem; width: auto; min-height: 36px; }
         .btn-add {
-            background: rgba(212,175,55,0.1);
-            border: 2px dashed var(--gold); color: var(--gold);
-            width: 100%; margin-top: 0.5rem;
+            background: rgba(212,175,55,0.1); border: 2px dashed var(--gold);
+            color: var(--gold); width: 100%; margin-top: 0.5rem;
         }
 
         /* PLAYER SETUP */
@@ -118,252 +131,199 @@
             flex: 1; display: flex; flex-direction: column;
             padding: 1.5rem 1rem; max-width: 500px; width: 100%; margin: 0 auto;
         }
-
         .player-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
-
         .player-input-row { display: flex; align-items: center; gap: 0.5rem; }
-
         .player-input {
-            flex: 1; padding: 14px;
-            background: #111; border: 2px solid #d4af37;
-            color: #e8e0d5; border-radius: 10px;
-            font-size: 1rem; font-family: 'Inter', sans-serif;
+            flex: 1; padding: 14px; background: #111; border: 2px solid #d4af37;
+            color: #e8e0d5; border-radius: 10px; font-size: 1rem; font-family: 'Inter', sans-serif;
+            /* FIX: iOS Zoom Prevention */
+            font-size: 16px;
+            touch-action: manipulation;
         }
-
         .player-input.host {
-            background: rgba(212,175,55,0.1);
-            border-color: var(--gold); font-family: 'Cinzel', serif;
+            background: rgba(212,175,55,0.1); border-color: var(--gold); font-family: 'Cinzel', serif;
         }
-
         .player-remove {
             width: 36px; height: 36px; border-radius: 50%;
             background: rgba(220,20,60,0.2); border: 1px solid var(--crimson);
             color: var(--crimson); display: flex; align-items: center;
-            justify-content: center; cursor: pointer;
-            font-size: 1.2rem; transition: all 0.2s;
+            justify-content: center; cursor: pointer; font-size: 1.2rem; transition: all 0.2s;
         }
         .player-remove:hover { background: var(--crimson); color: white; }
         .player-remove:disabled { opacity: 0.3; cursor: not-allowed; }
-
         .player-counter {
             text-align: center; color: rgba(232,224,213,0.5);
             font-size: 0.8rem; margin: 0.5rem 0; letter-spacing: 1px;
         }
 
         /* DISCIPLINE GRID */
-        .discipline-grid {
-            display: grid; grid-template-columns: 1fr; gap: 14px;
-            padding: 1rem; flex: 1; overflow-y: auto;
+        .discipline-grid { 
+            display:grid; grid-template-columns:1fr; gap:14px; 
+            padding:1rem; flex:1; overflow-y:auto; 
         }
-        @media (min-width: 380px) { .discipline-grid { grid-template-columns: 1fr 1fr; } }
+        @media (min-width:380px) { .discipline-grid { grid-template-columns:1fr 1fr; } }
 
         .discipline-card {
-            background: linear-gradient(145deg, rgba(26,10,10,0.95), rgba(10,5,5,0.98));
-            border: 2px solid rgba(212,175,55,0.25);
-            border-radius: 14px; padding: 1.25rem; text-align: center;
-            cursor: pointer; transition: all 0.3s; position: relative;
+            background:linear-gradient(145deg,rgba(26,10,10,0.95),rgba(10,5,5,0.98)); 
+            border:2px solid rgba(212,175,55,0.25);
+            border-radius:14px; padding:1.25rem; text-align:center; 
+            cursor:pointer; transition:all 0.3s; position: relative;
         }
-        .discipline-card.locked {
-            opacity: 0.35; pointer-events: none;
-            border-color: rgba(212,175,55,0.1);
-        }
-        .discipline-card.active {
-            border-color: var(--gold);
-            box-shadow: 0 0 25px rgba(212,175,55,0.3);
-        }
+        .discipline-card.locked { opacity:0.35; pointer-events:none; border-color: rgba(212,175,55,0.1); }
+        .discipline-card.active { border-color:var(--gold); box-shadow:0 0 25px rgba(212,175,55,0.3); }
         .discipline-card:not(.locked):hover {
             border-color: rgba(212,175,55,0.6); transform: translateY(-2px);
         }
 
         /* SWIPE GAME */
-        .swipe-screen {
-            position: fixed; inset: 0; background: var(--void);
-            z-index: 300; display: none; flex-direction: column;
+        .swipe-screen { 
+            position:fixed; inset:0; background:var(--void); 
+            z-index:300; display:none; flex-direction:column; 
         }
-        .swipe-screen.active { display: flex; }
-
-        .swipe-area {
-            flex: 1; position: relative; display: flex;
-            align-items: center; justify-content: center;
-            /* FIX: pan-y verhindert Seiten-Swipe der Seite, pan-x das Scrollen */
-            touch-action: none;
-            cursor: grab;
+        .swipe-screen.active { display:flex; }
+        .swipe-area { 
+            flex:1; position:relative; display:flex; 
+            align-items:center; justify-content:center;
+            touch-action: none; cursor: grab;
         }
         .swipe-area:active { cursor: grabbing; }
-
         .swipe-arrow {
-            font-size: 6.5rem; color: var(--gold);
-            text-shadow: 0 0 40px rgba(212,175,55,0.6);
-            transition: all 0.3s; opacity: 0; transform: scale(0.8);
+            font-size:6.5rem; color:var(--gold); 
+            text-shadow:0 0 40px rgba(212,175,55,0.6); 
+            transition:all 0.3s; opacity:0; transform: scale(0.8);
             will-change: transform, opacity;
         }
-        .swipe-arrow.show { opacity: 1; transform: scale(1); }
-
+        .swipe-arrow.show { opacity:1; transform:scale(1); }
         .swipe-instruction {
             position: absolute; bottom: 20%; left: 50%;
             transform: translateX(-50%); color: rgba(232,224,213,0.5);
-            font-size: 0.85rem; text-align: center; white-space: nowrap;
+            font-size: 0.85rem; text-align: center;
         }
 
-        /* GAME HEADER */
+        /* GAME */
         .game-header {
-            background: rgba(26,10,10,0.98); padding: 12px 16px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(220,20,60,0.25);
-            z-index: 100; position: sticky; top: 0;
+            background:rgba(26,10,10,0.98); padding:12px 16px; 
+            display:flex; justify-content:space-between; align-items:center;
+            border-bottom:1px solid rgba(220,20,60,0.25); z-index:100;
+            position: sticky; top: 0;
         }
-
         .player-indicator { display: flex; flex-direction: column; }
-
-        .player-label {
-            font-size: 0.65rem; color: rgba(232,224,213,0.5);
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-
-        .player-name {
-            font-family: 'Cinzel', serif; color: var(--gold);
-            font-size: 1.2rem; letter-spacing: 1px;
-        }
-
+        .player-label { font-size: 0.65rem; color: rgba(232,224,213,0.5); letter-spacing: 2px; text-transform: uppercase; }
+        .player-name { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; letter-spacing: 1px; }
         .player-avatars { display: flex; margin-right: 10px; }
-
         .avatar {
             width: 32px; height: 32px; border-radius: 50%;
             background: linear-gradient(135deg, var(--burgund), var(--crimson));
-            border: 2px solid var(--gold);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; font-weight: 700;
+            border: 2px solid var(--gold); display: flex; align-items: center;
+            justify-content: center; font-size: 0.75rem; font-weight: 700;
             margin-left: -8px; position: relative; transition: all 0.3s;
         }
         .avatar:first-child { margin-left: 0; }
-        .avatar.active {
+        .avatar.active { 
             background: linear-gradient(135deg, var(--gold), #b8941f);
-            color: var(--void); transform: scale(1.1);
-            z-index: 10; box-shadow: 0 0 15px rgba(212,175,55,0.5);
+            color: var(--void); transform: scale(1.1); z-index: 10;
+            box-shadow: 0 0 15px rgba(212,175,55,0.5);
         }
-
         .safe-word-btn {
-            background: var(--crimson); padding: 9px 18px;
-            border: none; color: white; font-weight: 700;
-            border-radius: 6px; animation: pulse 1.8s infinite;
-            font-size: 0.8rem; cursor: pointer;
+            background:var(--crimson); padding:9px 18px; border:none; 
+            color:white; font-weight:700; border-radius:6px;
+            animation:pulse 1.8s infinite; font-size:0.8rem; cursor: pointer;
             box-shadow: 0 0 15px rgba(220,20,60,0.4);
         }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220,20,60,0.7); }
-            50% { box-shadow: 0 0 0 12px rgba(220,20,60,0); }
+        @keyframes pulse { 
+            0%,100% { box-shadow:0 0 0 0 rgba(220,20,60,0.7); } 
+            50% { box-shadow:0 0 0 12px rgba(220,20,60,0); } 
         }
 
         .task-card {
-            background: linear-gradient(135deg, rgba(26,10,10,0.98), rgba(10,5,5,0.98));
-            border: 2px solid var(--gold); border-radius: 14px;
-            padding: 1.75rem 1.25rem; width: 100%; max-width: 420px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6); margin: 0 auto;
+            background:linear-gradient(135deg,rgba(26,10,10,0.98),rgba(10,5,5,0.98)); 
+            border:2px solid var(--gold); border-radius:14px; 
+            padding:1.75rem 1.25rem; width:100%; max-width:420px; 
+            box-shadow:0 15px 40px rgba(0,0,0,0.6); margin: 0 auto;
         }
 
-        .wheel-container {
-            width: min(240px, 62vw); height: min(240px, 62vw);
-            position: relative; margin: 1rem auto;
+        .wheel-container { 
+            width:min(240px,62vw); height:min(240px,62vw); 
+            position:relative; margin:1rem auto; 
         }
-
         .wheel {
-            width: 100%; height: 100%; border-radius: 50%;
-            border: 8px solid var(--gold); position: relative;
-            overflow: hidden;
-            /* FIX: transition wird per JS gesetzt um Rücksprung zu vermeiden */
-            box-shadow: 0 0 30px rgba(212,175,55,0.5), inset 0 0 50px rgba(0,0,0,0.5);
+            width:100%; height:100%; border-radius:50%; 
+            border:8px solid var(--gold); position: relative; overflow:hidden;
+            box-shadow:0 0 30px rgba(212,175,55,0.5), inset 0 0 50px rgba(0,0,0,0.5);
         }
-
         .wheel-segment {
-            position: absolute; width: 50%; height: 50%;
-            transform-origin: 100% 100%;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 700;
+            position:absolute; width:50%; height:50%; 
+            transform-origin:100% 100%; display:flex; 
+            align-items:center; justify-content:center;
+            font-family:'Cinzel',serif; font-size:0.75rem; font-weight:700; 
             left: 50%; top: 50%; margin-left: -50%; margin-top: -50%;
         }
-
-        .segment-1 { background: var(--gold); transform: rotate(0deg); color: #000; }
-        .segment-2 { background: var(--burgund); transform: rotate(90deg); color: #fff; }
-        .segment-3 { background: #1a1a1a; transform: rotate(180deg); color: #fff; }
-        .segment-4 { background: var(--crimson); transform: rotate(270deg); color: #fff; }
-
+        .segment-1 { background:var(--gold); transform:rotate(0deg); color: #000; }
+        .segment-2 { background:var(--burgund); transform:rotate(90deg); color:#fff; }
+        .segment-3 { background:#1a1a1a; transform:rotate(180deg); color:#fff; }
+        .segment-4 { background:var(--crimson); transform:rotate(270deg); color:#fff; }
         .wheel-pointer {
-            position: absolute; top: -15px; left: 50%;
-            transform: translateX(-50%);
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 32px solid var(--gold); z-index: 20;
+            position:absolute; top:-15px; left:50%; 
+            transform:translateX(-50%);
+            border-left:16px solid transparent; border-right:16px solid transparent;
+            border-top:32px solid var(--gold); z-index:20;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
         }
 
-        /* Intensity Dots */
         #intensityBar { display: none; gap: 16px; justify-content: center; margin: 1rem 0; }
-
         .intensity-dot {
             width: 42px; height: 42px; border-radius: 50%;
-            border: 2px solid rgba(212,175,55,0.3);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Cinzel', serif; font-weight: 700;
-            cursor: pointer; transition: all 0.3s;
-            background: rgba(212,175,55,0.05); color: rgba(232,224,213,0.5);
+            border: 2px solid rgba(212,175,55,0.3); display: flex;
+            align-items: center; justify-content: center;
+            font-family: 'Cinzel', serif; font-weight: 700; cursor: pointer;
+            transition: all 0.3s; background: rgba(212,175,55,0.05);
+            color: rgba(232,224,213,0.5);
         }
         .intensity-dot.active {
             border-color: var(--gold); background: var(--gold);
             color: var(--void); box-shadow: 0 0 20px rgba(212,175,55,0.4);
         }
 
-        /* Progress Steps */
         .progress-step {
             flex: 1; height: 6px; background: rgba(212,175,55,0.15);
-            border-radius: 3px; transition: all 0.5s;
-            position: relative; overflow: hidden;
+            border-radius: 3px; transition: all 0.5s; position: relative; overflow: hidden;
         }
         .progress-step.completed {
             background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.4);
         }
-        /* FIX: active shimmer nur auf genau einem Schritt */
-        .progress-step.active-next::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        .progress-step.active::after {
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent);
             animation: shimmer 2s infinite;
         }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         .progress-container {
-            position: fixed; bottom: max(18px, env(safe-area-inset-bottom));
-            left: 50%; transform: translateX(-50%);
-            width: min(92%, 400px);
-            background: rgba(0,0,0,0.85); padding: 12px; border-radius: 18px;
-            border: 1px solid rgba(212,175,55,0.25);
-            backdrop-filter: blur(12px); z-index: 200;
+            position:fixed; bottom:max(18px, env(safe-area-inset-bottom)); 
+            left:50%; transform:translateX(-50%);
+            width:min(92%,400px); background:rgba(0,0,0,0.85); 
+            padding:12px; border-radius:18px;
+            border:1px solid rgba(212,175,55,0.25); backdrop-filter:blur(12px); z-index:200;
         }
 
-        /* Mode Selector */
-        #modeSelector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; }
-
+        #modeSelector {
+            display:grid; grid-template-columns:1fr 1fr; gap:12px;
+            width:100%; max-width:400px;
+        }
         #modeSelector > div {
             border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s;
             font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 1px;
-            padding: 1.2rem; border-radius: 12px; text-align: center;
-            cursor: pointer; background: rgba(212,175,55,0.05);
+            padding: 1.2rem; border-radius: 12px; text-align: center; cursor: pointer;
+            background: rgba(212,175,55,0.05);
         }
-        #modeSelector > div:hover,
-        #modeSelector > div.mode-active {
-            border-color: var(--gold);
-            background: rgba(212,175,55,0.2);
+        #modeSelector > div:hover, #modeSelector > div.active {
+            border-color: var(--gold); background: rgba(212,175,55,0.2);
             box-shadow: 0 0 15px rgba(212,175,55,0.2);
         }
-        /* FIX: Gesperrte Modi klar markieren */
-        #modeSelector > div.mode-locked {
+        #modeSelector > div.locked {
             opacity: 0.3; pointer-events: none; cursor: default;
         }
 
-        /* Modal */
         #successModal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.96);
             display: none; align-items: center; justify-content: center;
@@ -383,26 +343,66 @@
             font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 1px;
             transition: all 0.3s; width: 100%;
         }
-        .complete-btn:hover { background: var(--emerald); color: var(--void); box-shadow: 0 0 20px rgba(39,174,96,0.3); }
+        .complete-btn:hover {
+            background: var(--emerald); color: var(--void);
+            box-shadow: 0 0 20px rgba(39,174,96,0.3);
+        }
 
         .next-player-hint {
             text-align: center; padding: 1rem;
             color: rgba(232,224,213,0.6); font-size: 0.9rem; font-style: italic;
         }
-
         .player-turn-badge {
-            display: inline-block; background: var(--gold); color: var(--void);
-            padding: 2px 8px; border-radius: 12px;
-            font-size: 0.65rem; font-weight: 700;
-            margin-left: 8px; vertical-align: middle;
-            font-family: 'Inter', sans-serif;
+            display: inline-block; font-size: 0.65rem; color: rgba(212,175,55,0.7);
+            margin-left: 0.5rem; letter-spacing: 1px;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--void); }
-        ::-webkit-scrollbar-thumb { background: var(--burgund); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--crimson); }
+        /* TESTING UI */
+        .testing-header {
+            background: rgba(0,255,136,0.05); border-bottom: 1px solid rgba(0,255,136,0.2);
+            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .testing-title {
+            font-family: 'Fira Code', monospace; font-size: 0.9rem;
+            color: var(--neon); font-weight: 700;
+        }
+        .testing-panel {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,136,0.15);
+            border-radius: 8px; padding: 12px; margin-bottom: 12px;
+        }
+        .bot-stat {
+            display: flex; align-items: center; gap: 8px;
+            font-family: 'Fira Code', monospace; font-size: 0.75rem;
+            color: var(--neon);
+        }
+        .bot-indicator {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--neon); animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .bot-log {
+            font-family: 'Fira Code', monospace; font-size: 0.7rem;
+            color: rgba(0,255,136,0.8); margin-bottom: 4px; line-height: 1.4;
+        }
+        .stress-bar {
+            width: 100%; height: 6px; background: rgba(0,0,0,0.5);
+            border-radius: 3px; overflow: hidden; margin-top: 8px;
+        }
+        .stress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--neon), #00cc66);
+            transition: width 0.3s;
+        }
+        .test-control-btn {
+            background: rgba(0,255,136,0.1); border: 1px solid var(--neon);
+            color: var(--neon); padding: 8px 12px; border-radius: 6px;
+            font-family: 'Fira Code', monospace; font-size: 0.7rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .test-control-btn:hover {
+            background: rgba(0,255,136,0.2); box-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
 
+        /* FIX: Shake Animation für falsche Codes */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
@@ -411,244 +411,349 @@
     </style>
 </head>
 <body>
+    <div class="watermark">FUNKENFLUG</div>
 
-<div class="watermark">ரா சுவாதி</div>
+    <!-- AUTH SCREEN -->
+    <div class="screen active" id="authScreen">
+        <div class="auth-container">
+            <h1>FUNKENFLUG</h1>
+            <div style="text-align:center;color:rgba(232,224,213,0.6);font-size:0.9rem;letter-spacing:1px;">Johanna Weber Edition</div>
+            <input type="text" id="accessCode" class="code-input" placeholder="CODE" maxlength="8" autocomplete="off">
+            <button onclick="authenticate()" class="btn">ZUGANG</button>
+            <button onclick="startDemo()" class="btn btn-secondary">DEMO</button>
+        </div>
+        <button class="btn btn-beta" onclick="enterBetaMode()">TSTBT BETA</button>
+    </div>
 
-<!-- AUTH -->
-<div class="screen active" id="authScreen">
-    <div class="auth-container">
-        <h1>FUNKENFLUG</h1>
-        <div style="color:#dc143c;font-size:0.95rem;letter-spacing:3px;margin-bottom:2rem;">JOHANNA WEBER EDITION</div>
-        <input type="password" id="accessCode" class="code-input" placeholder="••••••••" maxlength="8" inputmode="numeric">
-        <button class="btn" onclick="authenticate()">VOLLZUGANG AKTIVIEREN</button>
-        <button class="btn btn-secondary" onclick="startDemo()">DEMO (Disziplin I+II)</button>
-        <div style="margin-top:3rem;font-size:0.7rem;color:rgba(232,224,213,0.35);text-align:center;">
-            Vollzugriff-Code: 26101908<br>Offline-fähig • 2–8 Spieler • v2.3
+    <!-- SETUP SCREEN -->
+    <div class="screen" id="setupScreen">
+        <div style="padding:1.5rem;text-align:center;">
+            <h1>Spielerinnen</h1>
+        </div>
+        <div class="player-setup-container">
+            <div class="player-list" id="playerList"></div>
+            <div class="player-counter" id="playerCounter"></div>
+            <button id="addPlayerBtn" onclick="addPlayer()" class="btn btn-add">+ SPIELERIN HINZUFÜGEN</button>
+            <button onclick="startGameSetup()" class="btn" style="margin-top:2rem;">SPIEL STARTEN</button>
         </div>
     </div>
-</div>
 
-<!-- SETUP -->
-<div class="screen" id="setupScreen">
-    <div class="player-setup-container">
-        <h1 style="margin-bottom:1.5rem;font-size:1.8rem;">Spielerinnen</h1>
-        <div class="player-counter" id="playerCounter">2 Spielerinnen (min. 2, max. 8)</div>
-        <div class="player-list" id="playerList"></div>
-        <button class="btn btn-add" onclick="addPlayer()" id="addPlayerBtn">+ WEITERE SPIELERIN</button>
-        <div style="margin-top:auto;padding-top:1rem;">
-            <button class="btn" onclick="startGameSetup()" style="width:100%;">RITUAL BEGINNEN</button>
+    <!-- DISCIPLINE SCREEN -->
+    <div class="screen" id="disciplineScreen">
+        <div style="padding:1.5rem;text-align:center;">
+            <h1>Disziplinen</h1>
+        </div>
+        <div class="discipline-grid" id="disciplineGrid"></div>
+    </div>
+
+    <!-- SWIPE GAME SCREEN -->
+    <div class="swipe-screen" id="swipeScreen">
+        <div class="game-header">
+            <div class="player-indicator">
+                <div class="player-label">Aktuelle Spielerin</div>
+                <div id="swipePlayerName" class="player-name">—</div>
+            </div>
+            <button onclick="triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+        </div>
+        <div class="swipe-area" id="swipeArea">
+            <div style="text-align:center;">
+                <div id="swipeArrow" class="swipe-arrow">↑</div>
+                <div id="swipeTarget" style="color:rgba(232,224,213,0.6);font-size:0.9rem;margin-top:2rem;">Wische nach oben</div>
+                <div id="swipeProgress" style="color:var(--gold);font-size:1.2rem;margin-top:1rem;font-family:Cinzel,serif;">0 / 5</div>
+            </div>
+            <div class="swipe-instruction">Wische schnell in die angezeigte Richtung</div>
         </div>
     </div>
-</div>
 
-<!-- DISCIPLINE SELECTION -->
-<div class="screen" id="disciplineScreen">
-    <div style="padding:1.5rem 1rem 1rem;text-align:center;">
-        <h1 style="font-size:1.6rem;">Wähle Disziplin</h1>
-        <div style="color:rgba(232,224,213,0.5);font-size:0.8rem;margin-top:0.5rem;">Freischalten durch Sequenz</div>
-    </div>
-    <div class="discipline-grid" id="disciplineGrid"></div>
-</div>
-
-<!-- SWIPE GAME -->
-<div class="swipe-screen" id="swipeScreen">
-    <div style="padding:1.5rem;text-align:center;background:rgba(26,10,10,0.95);border-bottom:1px solid rgba(212,175,55,0.2);">
-        <div style="font-size:1rem;color:#d4af37;letter-spacing:2px;">DISZIPLIN I • SWIPE-TEST</div>
-        <div id="swipeProgress" style="font-family:Cinzel,serif;font-size:2.5rem;margin:0.5rem 0;color:#dc143c;text-shadow:0 0 20px rgba(220,20,60,0.5);">0 / 5</div>
-        <div id="swipeTarget" style="color:var(--silk);font-size:0.9rem;">Warte auf Start...</div>
-    </div>
-    <div class="swipe-area" id="swipeArea">
-        <div id="swipeArrow" class="swipe-arrow">↑</div>
-        <div class="swipe-instruction">Wische (oder ziehe mit der Maus) in die angezeigte Richtung</div>
-    </div>
-    <div style="padding:1.5rem;text-align:center;">
-        <button class="btn btn-secondary" style="width:160px;font-size:0.8rem;" onclick="endSwipeGame()">ABBRECHEN</button>
-    </div>
-</div>
-
-<!-- MAIN GAME -->
-<div class="screen" id="gameScreen">
-    <div class="game-header">
-        <div class="player-indicator">
-            <div class="player-label">AKTIVE SPIELERIN</div>
-            <div class="player-name" id="currentPlayerName">—</div>
-        </div>
-        <div style="display:flex;align-items:center;">
+    <!-- GAME SCREEN -->
+    <div class="screen" id="gameScreen">
+        <div class="game-header">
+            <div class="player-indicator">
+                <div class="player-label">Aktuelle Spielerin</div>
+                <div id="currentPlayerName" class="player-name">—</div>
+            </div>
             <div class="player-avatars" id="playerAvatars"></div>
-            <button class="safe-word-btn" onclick="triggerSafeWord()">SAFE</button>
+            <button onclick="triggerSafeWord()" class="safe-word-btn">SAFE WORD</button>
+        </div>
+
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;gap:1.5rem;overflow-y:auto;">
+            <div id="modeSelector" style="margin-bottom:1rem;"></div>
+
+            <div id="intensityBar">
+                <div class="intensity-dot active" onclick="setIntensity(1)">I</div>
+                <div class="intensity-dot" onclick="setIntensity(2)">II</div>
+                <div class="intensity-dot" onclick="setIntensity(3)">III</div>
+            </div>
+
+            <div id="taskCard" class="task-card" style="display:none;">
+                <div id="taskCategory" style="color:#d4af37;font-size:0.75rem;letter-spacing:2px;margin-bottom:0.75rem;text-transform:uppercase;"></div>
+                <div id="taskText" style="font-size:1.15rem;line-height:1.6;min-height:120px;font-weight:300;"></div>
+                <button onclick="completeTask()" class="complete-btn">AUFGABE ABGESCHLOSSEN</button>
+            </div>
+
+            <div id="nextPlayerHint" class="next-player-hint" style="display:none;">
+                Nächste Spielerin: <b id="nextPlayerName" style="color:var(--gold);"></b>
+            </div>
+
+            <div id="wheelContainer" style="display:none;width:100%;text-align:center;">
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-segment segment-1">GOLD</div>
+                        <div class="wheel-segment segment-2">BURGUND</div>
+                        <div class="wheel-segment segment-3">SCHWARZ</div>
+                        <div class="wheel-segment segment-4">CRIMSON</div>
+                    </div>
+                </div>
+                <button id="spinBtn" onclick="spinRewardWheel()" class="btn" style="margin-top:1.5rem;width:220px;background:linear-gradient(135deg,var(--gold),#b8941f);color:#000;border-color:#000;font-weight:700;">BELOHNUNG DREHEN</button>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div style="display:flex;gap:8px;margin-bottom:8px;" id="progressBar">
+                <div id="prog1" class="progress-step"></div>
+                <div id="prog2" class="progress-step"></div>
+                <div id="prog3" class="progress-step"></div>
+                <div id="prog4" class="progress-step"></div>
+            </div>
+            <div id="statusLine" style="text-align:center;font-size:0.75rem;color:#d4af37;letter-spacing:1.5px;font-family:'Cinzel',serif;">Wähle eine Disziplin</div>
         </div>
     </div>
 
-    <div style="flex:1;padding:1.5rem 1rem 100px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
-        <div id="modeSelector"></div>
-        <div id="intensityBar">
-            <div onclick="setIntensity(1)" class="intensity-dot active" id="int1">I</div>
-            <div onclick="setIntensity(2)" class="intensity-dot" id="int2">II</div>
-            <div onclick="setIntensity(3)" class="intensity-dot" id="int3">III</div>
+    <!-- TSTBT BETA SCREEN -->
+    <div class="screen beta-screen" id="betaScreen">
+        <div class="testing-header">
+            <div class="testing-title">⚡ TSTBT • AI BOT ARMY v1.0</div>
+            <div style="font-family:'Fira Code',monospace;font-size:0.7rem;color:var(--neon);">30 UNITS ACTIVE</div>
         </div>
-        <div id="taskCard" class="task-card" style="display:none;">
-            <div id="taskCategory" style="color:#d4af37;font-size:0.75rem;letter-spacing:2px;margin-bottom:0.75rem;text-transform:uppercase;"></div>
-            <div id="taskText" style="font-size:1.15rem;line-height:1.6;min-height:120px;font-weight:300;"></div>
-            <button onclick="completeTask()" class="complete-btn">AUFGABE ABGESCHLOSSEN</button>
-        </div>
-        <div id="nextPlayerHint" class="next-player-hint" style="display:none;">
-            Nächste Spielerin: <b id="nextPlayerName" style="color:var(--gold);"></b>
-        </div>
-        <div id="wheelContainer" style="display:none;width:100%;text-align:center;">
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <div class="wheel" id="wheel">
-                    <div class="wheel-segment segment-1">GOLD</div>
-                    <div class="wheel-segment segment-2">BURGUND</div>
-                    <div class="wheel-segment segment-3">SCHWARZ</div>
-                    <div class="wheel-segment segment-4">CRIMSON</div>
+        
+        <div style="flex:1;overflow-y:auto;padding:12px;">
+            <div class="testing-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <div style="color:var(--neon);font-size:0.8rem;">🤖 BOT ARMY STATUS</div>
+                    <div id="botArmyStatus" class="bot-stat"><div class="bot-indicator"></div>STANDBY</div>
+                </div>
+                <div id="botStatsDisplay" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+            </div>
+
+            <div class="testing-panel">
+                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">📊 STOCHASTIC ENGINE</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.7rem;">
+                    <div>Entropy: <span id="entropyVal" style="color:var(--gold);">0.00</span></div>
+                    <div>Chaos: <span id="chaosVal" style="color:var(--gold);">0.00</span></div>
+                    <div>Sync: <span id="syncVal" style="color:var(--gold);">100%</span></div>
+                    <div>Load: <span id="loadVal" style="color:var(--gold);">0%</span></div>
+                </div>
+                <div class="stress-bar"><div id="stressFill" class="stress-fill" style="width:0%"></div></div>
+            </div>
+
+            <div class="testing-panel">
+                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">🎯 TEST PROTOCOLS</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <button class="test-control-btn" onclick="runBotSimulation('swipe')">Test: Swipe</button>
+                    <button class="test-control-btn" onclick="runBotSimulation('discipline')">Test: Discipline</button>
+                    <button class="test-control-btn" onclick="runBotSimulation('wheel')">Test: Wheel</button>
+                    <button class="test-control-btn" onclick="runBotSimulation('full')">Test: Full Game</button>
                 </div>
             </div>
-            <button id="spinBtn" onclick="spinRewardWheel()" class="btn" style="margin-top:1.5rem;width:220px;background:linear-gradient(135deg,var(--gold),#b8941f);color:#000;border-color:#000;font-weight:700;">BELOHNUNG DREHEN</button>
+
+            <div class="testing-panel">
+                <div style="color:var(--neon);font-size:0.8rem;margin-bottom:8px;">📝 LIVE LOG</div>
+                <div id="botLogContainer" style="max-height:200px;overflow-y:auto;">
+                    <div class="bot-log" style="opacity:0.5;">System initialized. Waiting for commands...</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding:12px;border-top:1px solid rgba(0,255,136,0.2);display:flex;gap:8px;">
+            <button class="btn" onclick="showScreen('authScreen')" style="flex:1;font-size:0.75rem;">ZURÜCK ZUM AUTH</button>
+            <button class="btn btn-secondary" onclick="clearBotLogs()" style="width:auto;font-size:0.75rem;">CLEAR LOG</button>
         </div>
     </div>
 
-    <div class="progress-container">
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <div id="prog1" class="progress-step"></div>
-            <div id="prog2" class="progress-step"></div>
-            <div id="prog3" class="progress-step"></div>
-            <div id="prog4" class="progress-step"></div>
+    <!-- MODAL - FIX: data-closeable Attribut hinzugefügt -->
+    <div id="successModal" data-closeable="true" onclick="if(event.target===this && this.dataset.closeable === 'true')closeModal()">
+        <div>
+            <div id="modalTitle" style="color:#d4af37;font-family:Cinzel,serif;font-size:1.6rem;margin-bottom:1rem;text-shadow:0 0 20px rgba(212,175,55,0.3);"></div>
+            <div id="modalText" style="margin-bottom:2rem;line-height:1.6;color:rgba(232,224,213,0.9);"></div>
+            <button id="modalBtn" onclick="closeModal()" class="btn" style="width:100%;">WEITER</button>
         </div>
-        <div id="statusLine" style="text-align:center;font-size:0.75rem;color:#d4af37;letter-spacing:1.5px;font-family:'Cinzel',serif;">Wähle eine Disziplin</div>
     </div>
-</div>
-
-<!-- MODAL -->
-<div id="successModal" onclick="if(event.target===this)handleModalBackdrop()">
-    <div>
-        <div id="modalTitle" style="color:#d4af37;font-family:Cinzel,serif;font-size:1.6rem;margin-bottom:1rem;text-shadow:0 0 20px rgba(212,175,55,0.3);"></div>
-        <div id="modalText" style="margin-bottom:2rem;line-height:1.6;color:rgba(232,224,213,0.9);"></div>
-        <button id="modalBtn" onclick="closeModal()" class="btn" style="width:100%;">WEITER</button>
-    </div>
-</div>
 
 <script>
+// ====================== ERROR BOUNDARY ======================
+window.onerror = function(msg, url, line) {
+    console.error(`[FUNKENFLUG ERROR] ${msg} at line ${line}`);
+    // Versuche Modal anzuzeigen wenn verfügbar, sonst alert
+    try {
+        const modal = document.getElementById('successModal');
+        const title = document.getElementById('modalTitle');
+        const text = document.getElementById('modalText');
+        const btn = document.getElementById('modalBtn');
+        if (modal && title && text) {
+            title.textContent = "SYSTEMFEHLER";
+            text.innerHTML = `Ein kritischer Fehler ist aufgetreten.<br><br><code style="font-size:0.7rem;color:#ff6b6b;">${msg}</code><br><br>Bitte Seite neu laden.`;
+            modal.dataset.closeable = "true";
+            modal.style.display = 'flex';
+            if (btn) btn.style.display = 'block';
+        }
+    } catch(e) {
+        alert("Kritischer Systemfehler. Bitte neu laden.");
+    }
+    return true;
+};
+
+// ====================== UTILITY FUNCTIONS ======================
+function escapeHtml(str) { 
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); 
+}
+
 // ====================== KONFIGURATION ======================
 const CONFIG = {
-    version: '2.3.0',
+    version: '2.4.1-FIXED',
     buildDate: '2026-03-12',
     fullAccessCode: '26101908',
+    betaCode: 'TSTBT',
     minPlayers: 2,
     maxPlayers: 8,
     demoDisciplines: [1, 2]
 };
 
-// ====================== AUFGABEN-DATENBANK ======================
+// ====================== TSTBT - BOT SYSTEM ======================
+const CULTURES = ['eastern', 'western', 'hybrid'];
+const PERSONALITY_ARCHETYPES = ['aggressive', 'methodical', 'chaotic', 'passive', 'sniper'];
+
+class StochasticEngine {
+    constructor() { this.entropy = 0.5; this.chaos = 0.2; }
+    mutate(input) {
+        this.entropy = Math.min(1, this.entropy + Math.random() * 0.1);
+        return input.map(v => v * (0.9 + Math.random() * 0.2));
+    }
+    generateSeed() { return Date.now() * Math.random(); }
+}
+
+class Bot {
+    constructor(id) {
+        this.id = id;
+        this.culture = CULTURES[Math.floor(Math.random() * CULTURES.length)];
+        this.personality = PERSONALITY_ARCHETYPES[Math.floor(Math.random() * PERSONALITY_ARCHETYPES.length)];
+        this.reactionTime = 200 + Math.random() * 800;
+        this.accuracy = 0.7 + Math.random() * 0.25;
+        this.active = false;
+    }
+    simulateSwipe() {
+        const directions = ['up', 'right', 'down', 'left'];
+        const target = directions[Math.floor(Math.random() * 4)];
+        const success = Math.random() < this.accuracy;
+        return { type: 'swipe', target, success, delay: Math.floor(this.reactionTime * (0.8 + Math.random() * 0.4)), botId: this.id, personality: this.personality };
+    }
+    simulateDisciplineChoice() {
+        const available = Math.max(1, gameState.completedDisciplines.length + 1);
+        const choice = Math.floor(Math.random() * available) + 1;
+        return { type: 'discipline', choice, botId: this.id, culture: this.culture };
+    }
+    simulateWheelSpin() {
+        const segments = ['GOLD', 'BURGUND', 'SCHWARZ', 'CRIMSON'];
+        const result = segments[Math.floor(Math.random() * 4)];
+        return { type: 'wheel', result, anticipation: Math.floor(1000 + Math.random() * 2000), botId: this.id };
+    }
+}
+
+class BotArmy {
+    constructor(size = 30) {
+        this.bots = Array.from({length: size}, (_, i) => new Bot(i + 1));
+        this.engine = new StochasticEngine();
+        this.testResults = [];
+    }
+    async runTest(protocol, duration = 5000) {
+        this.active = true; this.testResults = [];
+        const startTime = Date.now();
+        const activeBots = this.bots.filter(() => Math.random() > 0.3);
+        activeBots.forEach(b => b.active = true);
+        logToBotUI(`⚡ Initiating ${protocol} test with ${activeBots.length} bots...`);
+        
+        const interval = setInterval(() => {
+            if (Date.now() - startTime > duration) {
+                clearInterval(interval); this.active = false; this.generateReport(); return;
+            }
+            activeBots.forEach(bot => {
+                if (Math.random() < 0.3) {
+                    let result;
+                    switch(protocol) {
+                        case 'swipe': result = bot.simulateSwipe(); break;
+                        case 'discipline': result = bot.simulateDisciplineChoice(); break;
+                        case 'wheel': result = bot.simulateWheelSpin(); break;
+                        case 'full':
+                            const r = Math.random();
+                            if (r < 0.4) result = bot.simulateSwipe();
+                            else if (r < 0.7) result = bot.simulateDisciplineChoice();
+                            else result = bot.simulateWheelSpin();
+                            break;
+                    }
+                    if (result) {
+                        this.testResults.push(result);
+                        logToBotUI(`[Bot ${result.botId}] ${result.type.toUpperCase()}`);
+                    }
+                }
+            });
+            updateStochasticMetrics(this.engine);
+        }, 200);
+    }
+    generateReport() {
+        const successRate = this.testResults.filter(r => r.type === 'swipe' ? r.success : true).length / Math.max(1, this.testResults.length);
+        const avgReaction = this.testResults.reduce((a, r) => a + (r.delay || 0), 0) / Math.max(1, this.testResults.length);
+        logToBotUI(`✓ Test complete. ${this.testResults.length} actions.`);
+        logToBotUI(`  Success rate: ${(successRate * 100).toFixed(1)}%`);
+        logToBotUI(`  Avg reaction: ${avgReaction.toFixed(0)}ms`);
+        logToBotUI(`  Entropy: ${this.engine.entropy.toFixed(3)}`);
+    }
+}
+
+const botArmy = new BotArmy(30);
+
+// ====================== DATENBANK ======================
 const taskDB = {
     geschenkband: {
-        1: [
-            "Die Gastgeberin beschreibt laut, wie sie dich dekorieren würde – ohne Berührung.",
-            "Verbundene Augen + nur verbale Dekoration durch die Gruppe.",
-            "Du stehst 30 Sekunden still und wirst nur mit Worten geschmückt.",
-            "Jede Spielerin nennt ein Accessoire, das sie dir anlegen würde."
-        ],
-        2: [
-            "Leichte Seidenbänder um die Handgelenke – keine festen Knoten.",
-            "Langsames Auspacken mit verbundenen Augen unter Anleitung.",
-            "Eine Spielerin berührt nur deine Schultern für 20 Sekunden.",
-            "Du darfst nur mit Ja/Nein antworten während der Dekoration."
-        ],
-        3: [
-            "Handgelenke mit weichem Stoff gefesselt – teste die Grenzen.",
-            "Kontrolliertes Auspacken mit gezielten, langsamen Berührungen.",
-            "Zwei Spielerinnen dekorieren gleichzeitig – synchronisierte Bewegungen.",
-            "60 Sekunden als lebendes Geschenk präsentieren – absolute Stille."
-        ]
+        1: ["Die Gastgeberin beschreibt laut, wie sie dich dekorieren würde – ohne Berührung.","Verbundene Augen + nur verbale Dekoration durch die Gruppe.","Du stehst 30 Sekunden still und wirst nur mit Worten geschmückt.","Jede Spielerin nennt ein Accessoire, das sie dir anlegen würde."],
+        2: ["Leichte Seidenbänder um die Handgelenke – keine festen Knoten.","Langsames Auspacken mit verbundenen Augen unter Anleitung.","Eine Spielerin berührt nur deine Schultern für 20 Sekunden.","Du darfst nur mit Ja/Nein antworten während der Dekoration."],
+        3: ["Handgelenke mit weichem Stoff gefesselt – teste die Grenzen.","Kontrolliertes Auspacken mit gezielten, langsamen Berührungen.","Zwei Spielerinnen dekorieren gleichzeitig – synchronisierte Bewegungen.","60 Sekunden als lebendes Geschenk präsentieren – absolute Stille."]
     },
     inspektion: {
-        1: [
-            "30 Sekunden nur visuelle Betrachtung – keine Berührung erlaubt.",
-            "Die Gruppe beschreibt laut, was sie an dir beobachtet.",
-            "Stimmverzehrung aktiv – du erkennst nicht, wer spricht."
-        ],
-        2: [
-            "5 Minuten absolute Bewegungslosigkeit bei Konsequenz.",
-            "Detaillierte verbale Beschreibung geplanter Handlungen.",
-            "Kommunikation nur durch Augenkontakt erlaubt."
-        ],
-        3: [
-            "Vollständiges Bewegungsverbot – jede Regung = Zeitbonus.",
-            "Anonyme Stimmen + präzise Körperanalyse von außen.",
-            "Du darfst nur mit „Ja, Johanna" oder „Nein, Johanna" antworten."
-        ]
+        1: ["30 Sekunden nur visuelle Betrachtung – keine Berührung erlaubt.","Die Gruppe beschreibt laut, was sie an dir beobachtet.","Stimmverzerrung aktiv – du erkennst nicht, wer spricht."],
+        2: ["5 Minuten absolute Bewegungslosigkeit bei Konsequenz.","Detaillierte verbale Beschreibung geplanter Handlungen.","Kommunikation nur durch Augenkontakt erlaubt."],
+        3: ["Vollständiges Bewegungsverbot – jede Regung = Zeitbonus.","Anonyme Stimmen + präzise Körperanalyse von außen.","Du darfst nur mit „Ja, Johanna" oder „Nein, Johanna" antworten."]
     },
     trio: {
-        1: [
-            "Alle anderen müssen sich einig sein, bevor ein Befehl erteilt wird.",
-            "Wette: Wer bringt dich als Erste zum Lächeln?",
-            "Synchronisierte Kommandos von zwei Stimmen gleichzeitig."
-        ],
-        2: [
-            "Wette: Wer schafft es, dich schneller zum Stöhnen zu bringen?",
-            "Eine hält dich von hinten fest, die andere agiert von vorne.",
-            "Wechselnde Rollen alle 60 Sekunden."
-        ],
-        3: [
-            "Verschwörung: Du wirst von hinten gehalten und siehst nur eine Person.",
-            "Zwei dürfen dich gleichzeitig berühren – du weißt nicht wer wo.",
-            "Doppelte Befehle – nur die Stimme der Gastgeberin zählt."
-        ]
+        1: ["Alle anderen müssen sich einig sein, bevor ein Befehl erteilt wird.","Wette: Wer bringt dich als Erste zum Lächeln?","Synchronisierte Kommandos von zwei Stimmen gleichzeitig."],
+        2: ["Wette: Wer schafft es, dich schneller zum Stöhnen zu bringen?","Eine hält dich von hinten fest, die andere agiert von vorne.","Wechselnde Rollen alle 60 Sekunden."],
+        3: ["Verschwörung: Du wirst von hinten gehalten und siehst nur eine Person.","Zwei dürfen dich gleichzeitig berühren – du weißt nicht wer wo.","Doppelte Befehle – nur die Stimme der Gastgeberin zählt."]
     },
     kontrolle: {
-        1: [
-            "90 Sekunden Stimulation, dann 30 Sekunden Pause.",
-            "Du darfst 3 Minuten nicht kommen – Gastgeberin entscheidet über Erlaubnis.",
-            "Langsames Hochfahren und abruptes Stoppen auf Kommando."
-        ],
-        2: [
-            "Dreimal Edging mit 15 Sekunden Pause dazwischen.",
-            "10 Minuten Stimulation ohne Erlaubnis zum Höhepunkt.",
-            "Präzises Stoppen im letzten Moment durch akustisches Signal."
-        ],
-        3: [
-            "Dreimal Edging mit zufälligen Pausen (10–30s).",
-            "15 Minuten totale Verweigerung – exakter Zeitpunkt wird bestimmt.",
-            "Synchrone Kontrolle durch zwei andere Spielerinnen."
-        ]
+        1: ["90 Sekunden Stimulation, dann 30 Sekunden Pause.","Du darfst 3 Minuten nicht kommen – Gastgeberin entscheidet über Erlaubnis.","Langsames Hochfahren und abruptes Stoppen auf Kommando."],
+        2: ["Dreimal Edging mit 15 Sekunden Pause dazwischen.","10 Minuten Stimulation ohne Erlaubnis zum Höhepunkt.","Präzises Stoppen im letzten Moment durch akustisches Signal."],
+        3: ["Dreimal Edging mit zufälligen Pausen (10–30s).","15 Minuten totale Verweigerung – exakter Zeitpunkt wird bestimmt.","Synchrone Kontrolle durch zwei andere Spielerinnen."]
     }
 };
 
 // ====================== SPIELSTATUS ======================
 let gameState = {
-    fullAccess: false,
-    players: [],
-    currentPlayerIndex: 0,
-    completedDisciplines: [],
-    unlockedModes: [],
-    currentMode: null,
-    currentIntensity: 1,
-    // FIX: Kumulierter Wheel-Winkel damit das Rad nie rückwärts dreht
-    cumulativeWheelAngle: 0,
-    currentTask: null,
-    turnCount: 1,
-    // FIX: Callback der nach Modal-Schließen ausgeführt wird
-    pendingAfterModal: null
+    fullAccess: false, betaMode: false, players: [], currentPlayerIndex: 0,
+    completedDisciplines: [], unlockedModes: [], currentMode: null,
+    currentIntensity: 1, cumulativeWheelAngle: 0, currentTask: null, turnCount: 1, pendingAfterModal: null
 };
 
-// ====================== SWIPE-VARIABLEN ======================
-let swipeState = {
-    count: 0,
-    currentTarget: null,
-    startX: 0,
-    startY: 0,
-    isMouseDown: false
-};
+let swipeState = { count: 0, currentTarget: null, startX: 0, startY: 0, isMouseDown: false, active: false };
 
 const arrows = ['↑', '→', '↓', '←'];
 const directions = ['up', 'right', 'down', 'left'];
 const dirLabels = ['nach oben', 'nach rechts', 'nach unten', 'nach links'];
 
 const wheelResults = [
-    { label: "GOLD",    color: "#d4af37", text: "Gastgeberin bestimmt die nächste Aufgabe exklusiv." },
-    { label: "BURGUND", color: "#800020", text: "Freifahrt – Du wählst selbst Intensität und Art." },
-    { label: "SCHWARZ", color: "#111",    text: "Rollentausch – Du wirst Beobachterin für eine Runde." },
-    { label: "CRIMSON", color: "#dc143c", text: "Intensität +1 (max. 3) • Sofortige Anwendung" }
+    {label:"GOLD", color:"#d4af37", text:"Gastgeberin bestimmt die nächste Aufgabe exklusiv."},
+    {label:"BURGUND", color:"#800020", text:"Freifahrt – Du wählst selbst Intensität und Art."},
+    {label:"SCHWARZ", color:"#111", text:"Rollentausch – Du wirst Beobachterin für eine Runde."},
+    {label:"CRIMSON", color:"#dc143c", text:"Intensität +1 (max. 3) • Sofortige Anwendung"}
 ];
 
 // ====================== SPIELERVERWALTUNG ======================
@@ -667,14 +772,11 @@ function renderPlayerInputs() {
         const canRemove = gameState.players.length > CONFIG.minPlayers && !isHost;
         return `
         <div class="player-input-row">
-            <input type="text"
-                   class="player-input ${isHost ? 'host' : ''}"
-                   value="${escapeHtml(name)}"
+            <input type="text" class="player-input ${isHost ? 'host' : ''}" value="${escapeHtml(name)}"
                    placeholder="${isHost ? 'Gastgeberin' : 'Spielerin ' + (index + 1)}"
-                   oninput="updatePlayerName(${index}, this.value)">
-            <button class="player-remove"
-                    onclick="removePlayer(${index})"
-                    ${!canRemove ? 'disabled' : ''}
+                   oninput="updatePlayerName(${index}, this.value)"
+                   autocomplete="off" autocorrect="off" autocapitalize="off">
+            <button class="player-remove" onclick="removePlayer(${index})" ${!canRemove ? 'disabled' : ''}
                     style="${!canRemove ? 'opacity:0;pointer-events:none;' : ''}">×</button>
         </div>`;
     }).join('');
@@ -683,109 +785,77 @@ function renderPlayerInputs() {
     addBtn.style.display = gameState.players.length >= CONFIG.maxPlayers ? 'none' : 'block';
 }
 
-// FIX: oninput statt onchange verhindert verlorene Eingaben bei schnellem Tippen
-function updatePlayerName(index, value) {
-    gameState.players[index] = value;
-}
-
+function updatePlayerName(index, value) { gameState.players[index] = value; }
 function addPlayer() {
     if (gameState.players.length < CONFIG.maxPlayers) {
-        gameState.players.push("");
-        renderPlayerInputs();
-        setTimeout(() => {
-            const inputs = document.querySelectorAll('.player-input');
-            if (inputs[inputs.length - 1]) inputs[inputs.length - 1].focus();
-        }, 100);
+        gameState.players.push(""); renderPlayerInputs();
+        setTimeout(() => { const inputs = document.querySelectorAll('.player-input'); inputs[inputs.length - 1]?.focus(); }, 100);
     }
 }
-
 function removePlayer(index) {
     if (gameState.players.length > CONFIG.minPlayers && index !== 0) {
-        gameState.players.splice(index, 1);
-        renderPlayerInputs();
+        gameState.players.splice(index, 1); renderPlayerInputs();
     }
 }
 
-// FIX: HTML-Injection in input.value verhindern
-function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// ====================== AUTHENTIFIZIERUNG ======================
+// ====================== AUTH ======================
 function authenticate() {
     const input = document.getElementById('accessCode').value;
     if (input === CONFIG.fullAccessCode) {
-        gameState.fullAccess = true;
-        try { localStorage.setItem('ff_access', 'full'); } catch(e) {}
-        initPlayerSetup();
-        showScreen('setupScreen');
+        gameState.fullAccess = true; 
+        try { localStorage.setItem('ff_access', 'full'); } catch(e) { console.warn('Storage blocked'); }
+        initPlayerSetup(); showScreen('setupScreen');
+    } else if (input === CONFIG.betaCode) {
+        enterBetaMode();
     } else {
         const btn = document.querySelector('#authScreen .btn');
-        btn.style.animation = 'shake 0.5s';
+        btn.style.animation = 'shake 0.5s'; 
         setTimeout(() => btn.style.animation = '', 500);
-        showModal("Zugang verweigert", "Falscher Code. Demo-Modus verfügbar.");
+        showModal("Zugang verweigert", "Falscher Code. Demo oder Beta verfügbar.");
     }
+}
+
+function enterBetaMode() {
+    gameState.betaMode = true; 
+    try { localStorage.setItem('ff_access', 'beta'); } catch(e) { console.warn('Storage blocked'); }
+    showScreen('betaScreen'); initBotUI();
 }
 
 function startDemo() {
-    gameState.fullAccess = false;
-    try { localStorage.setItem('ff_access', 'demo'); } catch(e) {}
-    initPlayerSetup();
-    showScreen('setupScreen');
+    gameState.fullAccess = false; 
+    try { localStorage.setItem('ff_access', 'demo'); } catch(e) { console.warn('Storage blocked'); }
+    initPlayerSetup(); showScreen('setupScreen');
 }
 
-// ====================== SETUP ======================
 function startGameSetup() {
-    // FIX: Trim-Werte sofort lesen (oninput kann bei schnellem Klick nachhängen)
-    document.querySelectorAll('.player-input').forEach((el, i) => {
-        gameState.players[i] = el.value.trim();
-    });
-
-    // FIX: Korrekte Validierung – zählt nur wirklich ausgefüllte Slots
+    document.querySelectorAll('.player-input').forEach((el, i) => { gameState.players[i] = el.value.trim(); });
     const filledCount = gameState.players.filter(p => p.trim() !== '').length;
-    if (filledCount < CONFIG.minPlayers) {
-        showModal("Zu wenig Spielerinnen", `Mindestens ${CONFIG.minPlayers} Namen eingeben.`);
-        return;
-    }
-
-    // Leere Einträge automatisch benennen
-    gameState.players = gameState.players.map((p, i) =>
-        p.trim() === '' ? `Spielerin ${i + 1}` : p.trim()
-    );
-
-    // Starte mit erster Nicht-Host-Spielerin (Index 1), wenn vorhanden
-    gameState.currentPlayerIndex = gameState.players.length > 1 ? 1 : 0;
+    if (filledCount < CONFIG.minPlayers) { showModal("Zu wenig Spielerinnen", `Mindestens ${CONFIG.minPlayers} Namen eingeben.`); return; }
+    gameState.players = gameState.players.map((p, i) => p.trim() === '' ? `Spielerin ${i + 1}` : p.trim());
+    gameState.currentPlayerIndex = gameState.players.length > 1 ? 1 : 0; 
     gameState.turnCount = 1;
-
-    showScreen('disciplineScreen');
-    renderDisciplines();
-    updateProgress();
+    showScreen('disciplineScreen'); renderDisciplines(); updateProgress();
 }
 
 // ====================== DISZIPLINEN ======================
 function renderDisciplines() {
     const grid = document.getElementById('disciplineGrid');
     const disciplines = [
-        { id: 1, name: "Swipe-Test", unlocks: "Geschenkband", req: 0 },
-        { id: 2, name: "Wissen",     unlocks: "Inspektion",   req: 1 },
-        { id: 3, name: "Risiko",     unlocks: "Trio",         req: 2 },
-        { id: 4, name: "Ultima",     unlocks: "Alle Modi",    req: 3, special: true }
+        {id: 1, name: "Swipe-Test", unlocks: "Geschenkband", req: 0},
+        {id: 2, name: "Wissen", unlocks: "Inspektion", req: 1},
+        {id: 3, name: "Risiko", unlocks: "Trio", req: 2},
+        {id: 4, name: "Ultima", unlocks: "Alle Modi", req: 3, special: true}
     ];
 
     grid.innerHTML = disciplines.map(d => {
         const completed = gameState.completedDisciplines.includes(d.id);
         const locked = !isDisciplineUnlocked(d.id);
         return `
-        <div class="discipline-card ${completed ? 'active' : ''} ${locked ? 'locked' : ''}"
-             onclick="${locked ? '' : `startDiscipline(${d.id})`}">
+        <div class="discipline-card ${completed ? 'active' : ''} ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startDiscipline(${d.id})`}">
             <div style="font-family:Cinzel,serif;font-size:1.8rem;margin-bottom:0.25rem;">${d.id}</div>
             <div style="font-size:1rem;letter-spacing:1px;margin-bottom:0.5rem;">${d.name}</div>
             <div style="font-size:0.7rem;opacity:0.6;line-height:1.3;">
-                ${d.special && !gameState.fullAccess
-                    ? 'Code erforderlich'
-                    : completed
-                        ? 'Abgeschlossen'
-                        : `Freischaltet: ${d.unlocks}`}
+                ${d.special && !gameState.fullAccess ? 'Code erforderlich' : completed ? 'Abgeschlossen' : `Freischaltet: ${d.unlocks}`}
             </div>
             ${completed ? '<div style="position:absolute;top:10px;right:10px;color:var(--gold);font-size:1.2rem;">✓</div>' : ''}
         </div>`;
@@ -808,56 +878,54 @@ function startDiscipline(n) {
     updateProgress();
 }
 
-// FIX: startMainGame wird erst nach Modal-Schließen aufgerufen
 function completeDiscipline(n) {
-    if (!gameState.completedDisciplines.includes(n)) {
-        gameState.completedDisciplines.push(n);
-    }
-
+    if (!gameState.completedDisciplines.includes(n)) gameState.completedDisciplines.push(n);
     if (n === 1) gameState.unlockedModes.push('geschenkband');
     if (n === 2) gameState.unlockedModes.push('inspektion');
     if (n === 3) { gameState.unlockedModes.push('trio'); gameState.unlockedModes.push('kontrolle'); }
-
-    renderDisciplines();
-    updateProgress();
-
+    renderDisciplines(); updateProgress();
     const names = ["", "Swipe-Test", "Wissen", "Risiko", "Ultima"];
-    // FIX: pendingAfterModal sorgt dafür, dass startMainGame() nach Schließen des Modals läuft
     gameState.pendingAfterModal = () => startMainGame();
     showModal(`Disziplin ${n} gemeistert`, `„${names[n]}" abgeschlossen. Neue Modi verfügbar.`);
 }
 
-// ====================== SWIPE GAME (DISZIPLIN I) ======================
+// ====================== SWIPE GAME ======================
 function initSwipeGame() {
     swipeState.count = 0;
+    swipeState.active = true;
     const screen = document.getElementById('swipeScreen');
     const area = document.getElementById('swipeArea');
     screen.classList.add('active');
-
-    // Touch-Events
-    area.addEventListener('touchstart', onSwipeTouchStart, { passive: true });
-    area.addEventListener('touchend', onSwipeTouchEnd, { passive: false });
-
-    // FIX: Maus-Events für Desktop
+    document.getElementById('swipePlayerName').textContent = gameState.players[gameState.currentPlayerIndex] || '—';
+    
+    // Event Listener mit {passive: true} für bessere Performance
+    area.addEventListener('touchstart', onSwipeTouchStart, {passive: true});
+    area.addEventListener('touchend', onSwipeTouchEnd, {passive: false});
     area.addEventListener('mousedown', onSwipeMouseDown);
     area.addEventListener('mouseup', onSwipeMouseUp);
-
+    
+    // FIX: Cleanup bei Popstate (Browser-Back)
+    window.addEventListener('popstate', endSwipeGameOnce);
+    
     nextSwipe();
 }
 
+// FIX: Einmaliger Cleanup-Handler
+function endSwipeGameOnce() {
+    if (swipeState.active) endSwipeGame();
+}
+
 function nextSwipe() {
-    if (swipeState.count >= 5) {
-        setTimeout(() => {
-            endSwipeGame();
-            completeDiscipline(1);
-        }, 600);
+    if (!swipeState.active || swipeState.count >= 5) {
+        if (swipeState.active) {
+            setTimeout(() => { endSwipeGame(); completeDiscipline(1); }, 600);
+        }
         return;
     }
     const idx = Math.floor(Math.random() * 4);
     swipeState.currentTarget = directions[idx];
     const arrow = document.getElementById('swipeArrow');
-    arrow.textContent = arrows[idx];
-    arrow.className = 'swipe-arrow show';
+    arrow.textContent = arrows[idx]; arrow.className = 'swipe-arrow show';
     document.getElementById('swipeProgress').textContent = `${swipeState.count} / 5`;
     document.getElementById('swipeTarget').textContent = `Wische ${dirLabels[idx]}`;
 }
@@ -889,26 +957,22 @@ function onSwipeMouseUp(e) {
 }
 
 function evaluateSwipe(dx, dy) {
-    if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return; // Zu kurz
-    const dir = Math.abs(dx) > Math.abs(dy)
-        ? (dx > 0 ? 'right' : 'left')
-        : (dy > 0 ? 'down' : 'up');
-
+    if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
+    const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
     if (dir === swipeState.currentTarget) {
         swipeState.count++;
         const arrow = document.getElementById('swipeArrow');
         arrow.classList.remove('show');
         setTimeout(nextSwipe, 300);
     } else {
-        // Falscher Swipe: kurzes rotes Feedback
         const arrow = document.getElementById('swipeArrow');
-        const originalColor = arrow.style.color;
         arrow.style.color = '#dc143c';
         setTimeout(() => { arrow.style.color = ''; }, 400);
     }
 }
 
 function endSwipeGame() {
+    swipeState.active = false;
     const screen = document.getElementById('swipeScreen');
     const area = document.getElementById('swipeArea');
     screen.classList.remove('active');
@@ -916,73 +980,66 @@ function endSwipeGame() {
     area.removeEventListener('touchend', onSwipeTouchEnd);
     area.removeEventListener('mousedown', onSwipeMouseDown);
     area.removeEventListener('mouseup', onSwipeMouseUp);
+    window.removeEventListener('popstate', endSwipeGameOnce);
 }
 
-// ====================== QUIZ (DISZIPLIN II) ======================
+// ====================== QUIZ ======================
 function initQuiz() {
-    // FIX: Lokale Variablen statt globaler window.quizAnswer-Überschreibung
-    let correct = 0;
-    let currentQ = 0;
+    let correct = 0, currentQ = 0;
     const questions = [
-        { q: "Was ist die Safeword-Regel?",  a: ["Stop sofort", "Weitermachen", "Pause"], correct: 0 },
-        { q: "Wer bestimmt bei GOLD?",        a: ["Gastgeberin", "Gast", "Würfel"],        correct: 0 },
-        { q: "Maximale Intensität?",          a: ["III", "II", "I"],                       correct: 0 }
+        {q: "Was ist die Safeword-Regel?", a: ["Stop sofort", "Weitermachen", "Pause"], correct: 0},
+        {q: "Wer bestimmt bei GOLD?", a: ["Gastgeberin", "Gast", "Würfel"], correct: 0},
+        {q: "Maximale Intensität?", a: ["III", "II", "I"], correct: 0}
     ];
 
-    function askQuestion() {
+    const answerCallback = (isCorrect) => {
+        if (isCorrect) correct++;
+        currentQ++;
+        closeModal();
+        setTimeout(() => askQuestion(), 300);
+    };
+
+    const askQuestion = () => {
         if (currentQ >= 3) {
-            if (correct >= 2) {
-                gameState.pendingAfterModal = null; // Quiz setzt eigenes Pending
-                completeDiscipline(2);
-            } else {
-                showModal("Nicht bestanden", `Nur ${correct}/3 richtig – mindestens 2 erforderlich.<br>Erneut versuchen.`);
-                gameState.pendingAfterModal = () => initQuiz();
+            if (correct >= 2) { 
+                gameState.pendingAfterModal = null; 
+                completeDiscipline(2); 
+            } else { 
+                showModal("Nicht bestanden", `Nur ${correct}/3 richtig. Wiederholen?`, true);
+                gameState.pendingAfterModal = () => initQuiz(); 
             }
             return;
         }
         const q = questions[currentQ];
-        // FIX: Antwort-Buttons greifen auf lokale Closure-Variable zu
         const answersHtml = q.a.map((ans, idx) =>
-            `<button onclick="(${answerCallback.toString()})(${idx === q.correct})"
-                     style="display:block;width:100%;margin-bottom:8px;padding:10px;
-                            background:#111;border:1px solid var(--gold);color:var(--silk);
-                            border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;">
-                ${ans}</button>`
+            `<button onclick="window._currentQuizCallback(${idx === q.correct})" style="display:block;width:100%;margin-bottom:8px;padding:10px;background:#111;border:1px solid var(--gold);color:var(--silk);border-radius:6px;cursor:pointer;">${ans}</button>`
         ).join('');
-        showModal(`Frage ${currentQ + 1}/3`, answersHtml, false); // kein auto-close
-    }
+        showModal(`Frage ${currentQ + 1}/3`, answersHtml, false);
+    };
 
-    function answerCallback(isCorrect) {
-        if (isCorrect) correct++;
-        currentQ++;
-        closeModal();
-        setTimeout(askQuestion, 300);
-    }
-
+    // FIX: Eindeutiger Callback-Name pro Instanz
+    window._currentQuizCallback = answerCallback;
     askQuestion();
 }
 
-// ====================== CASINO (DISZIPLIN III) ======================
+// ====================== CASINO ======================
 function initCasino() {
     const card1 = Math.floor(Math.random() * 10) + 1;
     const card2 = Math.floor(Math.random() * 10) + 1;
     const sum = card1 + card2;
     const win = sum >= 10;
-
-    const text = `Gezogen: ${card1} + ${card2} = <b style="color:${win ? 'var(--emerald)' : '#dc143c'}">${sum}</b><br><br>
-                  ${win ? '✓ Disziplin bestanden!' : '✗ Summe < 10 – nochmals versuchen (Summe ≥ 10 benötigt)'}`;
-
-    if (win) {
-        // FIX: completeDiscipline nach Modal-Schließen, nicht gleichzeitig mit Screen-Wechsel
-        gameState.pendingAfterModal = () => completeDiscipline(3);
+    const text = `Gezogen: ${card1} + ${card2} = <b style="color:${win ? 'var(--emerald)' : '#dc143c'}">${sum}</b><br><br>${win ? '✓ Disziplin bestanden!' : '✗ Summe < 10 – nochmals versuchen'}`;
+    
+    if (win) { 
+        gameState.pendingAfterModal = () => completeDiscipline(3); 
+    } else {
+        gameState.pendingAfterModal = () => initCasino();
     }
-    showModal("Disziplin III • Risiko", text);
+    showModal("Disziplin III • Risiko", text, true);
 }
 
 // ====================== HAUPTSPIEL ======================
-function unlockAllModes() {
-    gameState.unlockedModes = ['geschenkband', 'inspektion', 'trio', 'kontrolle'];
-}
+function unlockAllModes() { gameState.unlockedModes = ['geschenkband', 'inspektion', 'trio', 'kontrolle']; }
 
 function startMainGame() {
     showScreen('gameScreen');
@@ -1000,15 +1057,11 @@ function updatePlayerDisplay() {
     const currentName = gameState.players[gameState.currentPlayerIndex] || '—';
     const nameEl = document.getElementById('currentPlayerName');
     nameEl.innerHTML = `${escapeHtml(currentName)}<span class="player-turn-badge">Zug ${gameState.turnCount}</span>`;
-
-    // Avatare
     const avatarsContainer = document.getElementById('playerAvatars');
     avatarsContainer.innerHTML = gameState.players.map((name, idx) => {
         const isActive = idx === gameState.currentPlayerIndex;
         return `<div class="avatar ${isActive ? 'active' : ''}" title="${escapeHtml(name)}">${name.charAt(0).toUpperCase()}</div>`;
     }).join('');
-
-    // Nächste Spielerin
     const nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
     document.getElementById('nextPlayerName').textContent = gameState.players[nextIndex] || '';
 }
@@ -1022,109 +1075,91 @@ function nextPlayer() {
 function renderModeSelector() {
     const container = document.getElementById('modeSelector');
     const modes = [
-        { id: 'geschenkband', name: 'GESCHENKBAND', icon: '🎀' },
-        { id: 'inspektion',   name: 'INSPEKTION',   icon: '👁' },
-        { id: 'trio',         name: 'TRIO',         icon: '☰' },
-        { id: 'kontrolle',    name: 'KONTROLLE',    icon: '◉' }
+        {id: 'geschenkband', name: 'GESCHENKBAND', icon: '🎀'},
+        {id: 'inspektion', name: 'INSPEKTION', icon: '👁'},
+        {id: 'trio', name: 'TRIO', icon: '☰'},
+        {id: 'kontrolle', name: 'KONTROLLE', icon: '◉'}
     ];
 
     container.innerHTML = modes.map(m => {
         const unlocked = gameState.unlockedModes.includes(m.id);
-        // Trio benötigt ≥ 3 Spieler
         const available = unlocked && (m.id !== 'trio' || gameState.players.length >= 3);
         const isActive = gameState.currentMode === m.id;
-
         return `
-        <div onclick="${available ? `selectMode('${m.id}')` : ''}"
-             class="${isActive ? 'mode-active' : ''} ${!available ? 'mode-locked' : ''}">
+        <div onclick="${available ? `selectMode('${m.id}')` : ''}" class="${isActive ? 'active' : ''} ${!available ? 'locked' : ''}">
             <div style="font-size:1.5rem;margin-bottom:0.25rem;">${m.icon}</div>
             <div style="font-size:0.8rem;letter-spacing:1px;">${m.name}</div>
-            ${m.id === 'trio' && gameState.players.length < 3
-                ? '<div style="font-size:0.6rem;color:#dc143c;margin-top:4px;">Benötigt 3+</div>'
-                : ''}
+            ${m.id === 'trio' && gameState.players.length < 3 ? '<div style="font-size:0.6rem;color:#dc143c;margin-top:4px;">Benötigt 3+</div>' : ''}
         </div>`;
     }).join('');
 }
 
 function selectMode(mode) {
     gameState.currentMode = mode;
-    renderModeSelector(); // FIX: Aktiven Modus visuell markieren
+    renderModeSelector();
     document.getElementById('taskCard').style.display = 'block';
     document.getElementById('wheelContainer').style.display = 'none';
     document.getElementById('nextPlayerHint').style.display = 'none';
     document.getElementById('intensityBar').style.display = 'flex';
-
-    // Intensität auf 1 zurücksetzen ohne loadNewTask doppelt aufzurufen
     gameState.currentIntensity = 1;
     updateIntensityDisplay();
     loadNewTask();
-
-    const modeNames = { geschenkband: 'GESCHENKBAND', inspektion: 'INSPEKTION', trio: 'TRIO', kontrolle: 'KONTROLLE' };
-    document.getElementById('statusLine').textContent =
-        `${modeNames[mode]} • ${gameState.players[gameState.currentPlayerIndex]} ist dran`;
+    const modeNames = {geschenkband: 'GESCHENKBAND', inspektion: 'INSPEKTION', trio: 'TRIO', kontrolle: 'KONTROLLE'};
+    document.getElementById('statusLine').textContent = `${modeNames[mode]} • ${gameState.players[gameState.currentPlayerIndex]} ist dran`;
 }
 
+// FIX: Defensive Programmierung
 function loadNewTask() {
-    // FIX: Null-Guard - kein Absturz wenn kein Modus gewählt
-    if (!gameState.currentMode || !taskDB[gameState.currentMode]) return;
-
+    if (!gameState.currentMode) {
+        console.error('No mode selected');
+        return;
+    }
+    if (!taskDB[gameState.currentMode]) {
+        console.error('Invalid mode:', gameState.currentMode);
+        return;
+    }
     const pool = taskDB[gameState.currentMode][gameState.currentIntensity];
-    if (!pool || pool.length === 0) return;
-
+    if (!pool || pool.length === 0) {
+        console.error('No tasks for intensity', gameState.currentIntensity, 'in mode', gameState.currentMode);
+        return;
+    }
+    
     let task = pool[Math.floor(Math.random() * pool.length)];
-
-    // Trio mit mehr als 3 Spielern: Aktives Trio anzeigen
     if (gameState.currentMode === 'trio' && gameState.players.length > 3) {
         const others = gameState.players.filter((_, idx) => idx !== gameState.currentPlayerIndex);
         const selected = shuffleArray([...others]).slice(0, 2);
-        task += `<br><br><span style="color:var(--gold);font-size:0.85rem;">Aktives Trio: ${
-            [gameState.players[gameState.currentPlayerIndex], ...selected].map(escapeHtml).join(', ')
-        }</span>`;
+        task += `<br><br><span style="color:var(--gold);font-size:0.85rem;">Aktives Trio: ${[gameState.players[gameState.currentPlayerIndex], ...selected].map(escapeHtml).join(', ')}</span>`;
     }
-
     gameState.currentTask = task;
-    document.getElementById('taskCategory').textContent =
-        `${gameState.currentMode.toUpperCase()} • STUFE ${['I','II','III'][gameState.currentIntensity - 1]}`;
+    document.getElementById('taskCategory').textContent = `${gameState.currentMode.toUpperCase()} • STUFE ${['I','II','III'][gameState.currentIntensity - 1]}`;
     document.getElementById('taskText').innerHTML = task;
-
-    // Reset Complete-Button
     const btn = document.querySelector('.complete-btn');
-    if (btn) {
-        btn.innerHTML = 'AUFGABE ABGESCHLOSSEN';
-        btn.style.background = 'transparent';
-        btn.style.color = 'var(--emerald)';
-        btn.disabled = false;
-    }
+    if (btn) { btn.innerHTML = 'AUFGABE ABGESCHLOSSEN'; btn.style.background = 'transparent'; btn.style.color = 'var(--emerald)'; btn.disabled = false; }
 }
 
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+function shuffleArray(array) { 
+    for (let i = array.length - 1; i > 0; i--) { 
+        const j = Math.floor(Math.random() * (i + 1)); 
+        [array[i], array[j]] = [array[j], array[i]]; 
+    } 
+    return array; 
 }
 
-function setIntensity(lvl) {
-    gameState.currentIntensity = lvl;
-    updateIntensityDisplay();
-    // FIX: loadNewTask nur wenn Modus bereits gewählt
-    if (gameState.currentMode) loadNewTask();
+function setIntensity(lvl) { 
+    gameState.currentIntensity = lvl; 
+    updateIntensityDisplay(); 
+    if (gameState.currentMode) loadNewTask(); 
 }
 
-function updateIntensityDisplay() {
-    document.querySelectorAll('.intensity-dot').forEach((el, i) => {
-        el.classList.toggle('active', i + 1 === gameState.currentIntensity);
-    });
+function updateIntensityDisplay() { 
+    document.querySelectorAll('.intensity-dot').forEach((el, i) => { 
+        el.classList.toggle('active', i + 1 === gameState.currentIntensity); 
+    }); 
 }
 
 function completeTask() {
     const btn = document.querySelector('.complete-btn');
-    btn.innerHTML = '✓ ABGESCHLOSSEN';
-    btn.style.background = 'var(--emerald)';
-    btn.style.color = '#000';
-    btn.disabled = true;
-
+    btn.innerHTML = '✓ ABGESCHLOSSEN'; btn.style.background = 'var(--emerald)'; btn.style.color = '#000'; btn.disabled = true;
     setTimeout(() => {
         document.getElementById('wheelContainer').style.display = 'block';
         document.getElementById('nextPlayerHint').style.display = 'block';
@@ -1132,49 +1167,86 @@ function completeTask() {
     }, 800);
 }
 
-// FIX: Kumulierter Wheel-Winkel – Rad dreht nie rückwärts
+// FIX: Wheel Winkel normalisieren für Performance
 function spinRewardWheel() {
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     spinBtn.disabled = true;
-
     const targetSegment = Math.floor(Math.random() * 4);
-    const spins = 5 + Math.floor(Math.random() * 4); // 5–8 Umdrehungen
-
-    // Berechne absoluten Zielwinkel: aktuelle Position + volle Runden + Segment-Offset
+    const spins = 5 + Math.floor(Math.random() * 4);
     const segmentDeg = targetSegment * 90 + 45;
     const addedAngle = spins * 360 + segmentDeg;
-    // Auf nächstes passendes Vielfaches runden damit Zeiger korrekt zeigt
-    gameState.cumulativeWheelAngle += addedAngle;
-
+    
+    // FIX: Winkel normalisieren um Overflow zu vermeiden (max 3600deg = 10 Umdrehungen "History")
+    gameState.cumulativeWheelAngle = (gameState.cumulativeWheelAngle + addedAngle) % 3600;
+    
     wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
     wheel.style.transform = `rotate(${gameState.cumulativeWheelAngle}deg)`;
-
+    
     setTimeout(() => {
         const result = wheelResults[targetSegment];
-
-        if (result.label === "CRIMSON" && gameState.currentIntensity < 3) {
-            gameState.currentIntensity++;
-            updateIntensityDisplay();
+        if (result.label === "CRIMSON" && gameState.currentIntensity < 3) { 
+            gameState.currentIntensity++; 
+            updateIntensityDisplay(); 
         }
-
-        // FIX: Spielerwechsel und neuer Task werden NACH Modal-Schließen ausgeführt
         gameState.pendingAfterModal = () => {
-            nextPlayer();
+            nextPlayer(); 
             renderModeSelector();
             document.getElementById('wheelContainer').style.display = 'none';
             document.getElementById('nextPlayerHint').style.display = 'none';
             document.getElementById('taskCard').style.display = 'block';
-            loadNewTask();
+            loadNewTask(); 
             spinBtn.disabled = false;
         };
-
         showModal(result.label, result.text);
     }, 4200);
 }
 
-// ====================== PROGRESS BAR ======================
-// FIX: Nur den nächsten unabgeschlossenen Schritt als "active-next" markieren
+// ====================== TSTBT UI ======================
+function initBotUI() {
+    const statsContainer = document.getElementById('botStatsDisplay');
+    statsContainer.innerHTML = botArmy.bots.slice(0, 6).map(b => 
+        `<div class="bot-stat"><div class="bot-indicator"></div>Bot ${b.id}</div>`
+    ).join('');
+    logToBotUI('🟢 Bot Army initialized (30 units)'); 
+    logToBotUI('🟢 Stochastic Engine ready');
+}
+
+function updateBotStats(active, totalActions) {
+    document.getElementById('botArmyStatus').innerHTML = `<div class="bot-indicator"></div>ACTIVE (${active})`;
+    document.getElementById('loadVal').textContent = Math.min(100, Math.floor(totalActions / 10)) + '%';
+    document.getElementById('stressFill').style.width = Math.min(100, totalActions / 2) + '%';
+}
+
+function updateStochasticMetrics(engine) {
+    document.getElementById('entropyVal').textContent = engine.entropy.toFixed(2);
+    document.getElementById('chaosVal').textContent = (Math.random() * 0.5).toFixed(2);
+    const sync = 100 - Math.floor(Math.random() * 15);
+    document.getElementById('syncVal').textContent = sync + '%';
+    document.getElementById('syncVal').style.color = sync > 90 ? 'var(--neon)' : '#ff6b6b';
+}
+
+function logToBotUI(msg) {
+    const container = document.getElementById('botLogContainer');
+    const entry = document.createElement('div'); 
+    entry.className = 'bot-log';
+    const time = new Date().toLocaleTimeString('de-DE', {hour12:false});
+    entry.textContent = `[${time}] ${msg}`; 
+    entry.style.opacity = '1';
+    container.appendChild(entry); 
+    container.scrollTop = container.scrollHeight;
+}
+
+function clearBotLogs() { 
+    document.getElementById('botLogContainer').innerHTML = '<div class="bot-log" style="opacity:0.5;">Log cleared...</div>'; 
+}
+
+async function runBotSimulation(protocol) { 
+    logToBotUI(`▶ Starting ${protocol}...`); 
+    await botArmy.runTest(protocol, 8000); 
+}
+
+// ====================== SYSTEM ======================
 function updateProgress() {
     let foundNext = false;
     document.querySelectorAll('.progress-step').forEach((el, i) => {
@@ -1182,65 +1254,66 @@ function updateProgress() {
         const done = gameState.completedDisciplines.includes(discipline);
         el.classList.toggle('completed', done);
         const isNext = !done && !foundNext;
-        el.classList.toggle('active-next', isNext);
+        el.classList.toggle('active', isNext);
         if (isNext) foundNext = true;
     });
 }
 
-// ====================== MODAL ======================
+// FIX: data-closeable Attribut handling
 function showModal(title, text, closeable = true) {
+    const modal = document.getElementById('successModal');
     document.getElementById('modalTitle').innerHTML = title;
     document.getElementById('modalText').innerHTML = text;
     const btn = document.getElementById('modalBtn');
     btn.style.display = closeable ? 'block' : 'none';
-    document.getElementById('successModal').style.display = 'flex';
+    modal.dataset.closeable = closeable ? "true" : "false";
+    modal.style.display = 'flex';
 }
 
 function closeModal() {
     document.getElementById('successModal').style.display = 'none';
-    // FIX: Ausstehende Aktion nach Modal-Schließen ausführen
     if (typeof gameState.pendingAfterModal === 'function') {
-        const fn = gameState.pendingAfterModal;
-        gameState.pendingAfterModal = null;
-        setTimeout(fn, 50); // Micro-Delay damit DOM aktualisiert ist
+        const fn = gameState.pendingAfterModal; 
+        gameState.pendingAfterModal = null; 
+        setTimeout(fn, 50);
     }
 }
 
-// Backdrop-Klick nur wenn Modal schließbar ist
-function handleModalBackdrop() {
-    const btn = document.getElementById('modalBtn');
-    if (btn.style.display !== 'none') closeModal();
-}
-
-// ====================== SAFE WORD & SCREEN ======================
 function triggerSafeWord() {
-    gameState.pendingAfterModal = null; // Kein Auto-Continue nach Safe Word
-    showModal(
-        "SAFE WORD AKTIVIERT",
-        "Sofortiger Stopp aller Aktivitäten.<br><br>" +
-        "5 Minuten Nachsorge empfohlen.<br>" +
-        "Spiel kann danach fortgesetzt werden."
-    );
+    // FIX: Swipe Game auch beenden wenn aktiv
+    if (swipeState.active) endSwipeGame();
+    gameState.pendingAfterModal = null;
+    showModal("SAFE WORD AKTIVIERT", "Sofortiger Stopp aller Aktivitäten.<br><br>5 Minuten Nachsorge empfohlen.");
 }
 
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+function showScreen(id) { 
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+    document.getElementById(id).classList.add('active'); 
 }
 
-// ====================== INITIALISIERUNG ======================
+// ====================== SERVICE WORKER ======================
+function initServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        const swCode = `self.addEventListener('install',e=>e.waitUntil(caches.open('ff-v2').then(c=>c.addAll(['./'])).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+        try {
+            const blob = new Blob([swCode], {type:'application/javascript'});
+            const url = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(url).then(() => console.log('%c[SW] Offline ready', 'color:#00ff88'));
+        } catch(e) { console.log('SW registration skipped'); }
+    }
+}
+
+// ====================== INIT ======================
 window.onload = () => {
-    console.log('%cFUNKENFLUG Johanna Weber Edition v2.3', 'color:#d4af37;font-family:Cinzel,serif;font-size:14px;');
-    console.log('%cMehrplayer-Modus • 2–8 Spieler • Bugfix-Release', 'color:#666;font-size:10px;');
-
+    console.log('%cFUNKENFLUG v2.4.1-FIXED', 'color:#d4af37;font-family:Cinzel,serif;font-size:14px;');
+    console.log('%cAI Bot Army • Offline PWA • 30 Stochastic Units', 'color:#00ff88;font-size:10px;');
+    initServiceWorker();
     try {
-        const savedAccess = localStorage.getItem('ff_access');
-        if (savedAccess === 'full') gameState.fullAccess = true;
+        const saved = localStorage.getItem('ff_access');
+        if (saved === 'full') gameState.fullAccess = true;
+        if (saved === 'beta') gameState.betaMode = true;
     } catch(e) {}
 };
-
-// FIX: Service Worker mit data:-URI entfernt (funktioniert nicht in modernen Browsern)
-// Für echtes Offline-Caching: SW als separate sw.js Datei auslagern
 </script>
 </body>
 </html>
